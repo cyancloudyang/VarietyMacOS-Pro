@@ -27,10 +27,15 @@ final class WallpaperHistory: ObservableObject {
             source: wallpaper.source
         )
         
-        entries.insert(entry, at: 0)
-        
+entries.insert(entry, at: 0)
+
         // Trim to max size
         if entries.count > maxEntries {
+            // Clear cached images from removed entries
+            let entriesToRemove = entries[maxEntries...]
+            for entry in entriesToRemove {
+                entry.wallpaper?.clearCachedImage()
+            }
             entries = Array(entries.prefix(maxEntries))
         }
         
