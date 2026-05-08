@@ -1,0 +1,629 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1001 /* VarietyMacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001 /* VarietyMacOSApp.swift */; };
+		1002 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2002 /* MenuBarView.swift */; };
+		1003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2003 /* SettingsView.swift */; };
+		1004 /* WallpaperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2004 /* WallpaperManager.swift */; };
+		1005 /* DisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2005 /* DisplayMode.swift */; };
+		1006 /* ScreenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2006 /* ScreenManager.swift */; };
+		1007 /* WallpaperTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2007 /* WallpaperTimer.swift */; };
+		1008 /* WallpaperSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2008 /* WallpaperSource.swift */; };
+		1009 /* SimpleDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2009 /* SimpleDownloader.swift */; };
+		100A /* DefaultDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200A /* DefaultDownloader.swift */; };
+		100B /* WallhavenSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200B /* WallhavenSource.swift */; };
+		100C /* UnsplashSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200C /* UnsplashSource.swift */; };
+		100D /* BingSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200D /* BingSource.swift */; };
+		100E /* RedditSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200E /* RedditSource.swift */; };
+		100F /* LocalSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200F /* LocalSource.swift */; };
+		1010 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2010 /* DownloadManager.swift */; };
+		1011 /* ThrottlingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2011 /* ThrottlingManager.swift */; };
+		1012 /* Wallpaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2012 /* Wallpaper.swift */; };
+		1013 /* WallpaperHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2013 /* WallpaperHistory.swift */; };
+		1014 /* WallpaperFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014 /* WallpaperFavorite.swift */; };
+		1015 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2015 /* Persistence.swift */; };
+		1016 /* WallpaperCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016 /* WallpaperCache.swift */; };
+		1017 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2017 /* Preferences.swift */; };
+		1018 /* SourceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2018 /* SourceConfig.swift */; };
+		1019 /* FileManager+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019 /* FileManager+.swift */; };
+		101A /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A /* Logger.swift */; };
+		F8EF4954 /* ArtStationSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EF4955 /* ArtStationSource.swift */; };
+		862BED1B /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862BED1C /* ImageCacheManager.swift */; };
+		F57A00CD /* WallpaperFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57A00CE /* WallpaperFilter.swift */; };
+		46F3EF88 /* VarietyMacOSScripting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F3EF89 /* VarietyMacOSScripting.swift */; };
+		FD670DE82FA3B820003D7A5F /* DownloadError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD670DE72FA3B820003D7A5F /* DownloadError.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FD670DF12FA59A25003D7A5F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5000;
+			remoteInfo = VarietyMacOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2000 /* VarietyMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VarietyMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2001 /* VarietyMacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VarietyMacOSApp.swift; sourceTree = "<group>"; };
+		2002 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		2003 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2004 /* WallpaperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperManager.swift; sourceTree = "<group>"; };
+		2005 /* DisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayMode.swift; sourceTree = "<group>"; };
+		2006 /* ScreenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenManager.swift; sourceTree = "<group>"; };
+		2007 /* WallpaperTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperTimer.swift; sourceTree = "<group>"; };
+		2008 /* WallpaperSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperSource.swift; sourceTree = "<group>"; };
+		2009 /* SimpleDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleDownloader.swift; sourceTree = "<group>"; };
+		200A /* DefaultDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDownloader.swift; sourceTree = "<group>"; };
+		200B /* WallhavenSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallhavenSource.swift; sourceTree = "<group>"; };
+		200C /* UnsplashSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashSource.swift; sourceTree = "<group>"; };
+		200D /* BingSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BingSource.swift; sourceTree = "<group>"; };
+		200E /* RedditSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSource.swift; sourceTree = "<group>"; };
+		200F /* LocalSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSource.swift; sourceTree = "<group>"; };
+		2010 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		2011 /* ThrottlingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrottlingManager.swift; sourceTree = "<group>"; };
+		2012 /* Wallpaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallpaper.swift; sourceTree = "<group>"; };
+		2013 /* WallpaperHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperHistory.swift; sourceTree = "<group>"; };
+		2014 /* WallpaperFavorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperFavorite.swift; sourceTree = "<group>"; };
+		2015 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		2016 /* WallpaperCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperCache.swift; sourceTree = "<group>"; };
+		2017 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		2018 /* SourceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceConfig.swift; sourceTree = "<group>"; };
+		2019 /* FileManager+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+.swift"; sourceTree = "<group>"; };
+		201A /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		201B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		201C /* VarietyMacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VarietyMacOS.entitlements; sourceTree = "<group>"; };
+		F8EF4955 /* ArtStationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtStationSource.swift; sourceTree = "<group>"; };
+		862BED1C /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		F57A00CE /* WallpaperFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperFilter.swift; sourceTree = "<group>"; };
+		46F3EF89 /* VarietyMacOSScripting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VarietyMacOSScripting.swift; sourceTree = "<group>"; };
+		FD670DE72FA3B820003D7A5F /* DownloadError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadError.swift; sourceTree = "<group>"; };
+		FD670DED2FA59A25003D7A5F /* VarietyMacOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VarietyMacOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		FD670DEE2FA59A25003D7A5F /* VarietyMacOSTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = VarietyMacOSTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD670DEA2FA59A25003D7A5F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3000 = {
+			isa = PBXGroup;
+			children = (
+				3001 /* VarietyMacOS */,
+				FD670DEE2FA59A25003D7A5F /* VarietyMacOSTests */,
+				3002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3001 /* VarietyMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				2001 /* VarietyMacOSApp.swift */,
+				3010 /* App */,
+				3011 /* Core */,
+				3012 /* Sources */,
+				3013 /* Download */,
+				3014 /* Data */,
+				3015 /* Preferences */,
+				3016 /* Utilities */,
+				3017 /* Scripting */,
+				3018 /* Filters */,
+				201B /* Info.plist */,
+				201C /* VarietyMacOS.entitlements */,
+			);
+			path = VarietyMacOS;
+			sourceTree = "<group>";
+		};
+		3002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2000 /* VarietyMacOS.app */,
+				FD670DED2FA59A25003D7A5F /* VarietyMacOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3010 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2002 /* MenuBarView.swift */,
+				2003 /* SettingsView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		3011 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				2004 /* WallpaperManager.swift */,
+				2005 /* DisplayMode.swift */,
+				2006 /* ScreenManager.swift */,
+				2007 /* WallpaperTimer.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		3012 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				2008 /* WallpaperSource.swift */,
+				3020 /* Base */,
+				3021 /* Wallhaven */,
+				3022 /* Unsplash */,
+				3023 /* Bing */,
+				3024 /* Reddit */,
+				3025 /* Local */,
+				3026 /* ArtStation */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		3013 /* Download */ = {
+			isa = PBXGroup;
+			children = (
+				2010 /* DownloadManager.swift */,
+				2011 /* ThrottlingManager.swift */,
+			);
+			path = Download;
+			sourceTree = "<group>";
+		};
+		3014 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				3030 /* Models */,
+				2015 /* Persistence.swift */,
+				2016 /* WallpaperCache.swift */,
+				862BED1C /* ImageCacheManager.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		3015 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				2017 /* Preferences.swift */,
+				2018 /* SourceConfig.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		3016 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				2019 /* FileManager+.swift */,
+				201A /* Logger.swift */,
+				FD670DE72FA3B820003D7A5F /* DownloadError.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		3017 /* Scripting */ = {
+			isa = PBXGroup;
+			children = (
+				46F3EF89 /* VarietyMacOSScripting.swift */,
+			);
+			path = Scripting;
+			sourceTree = "<group>";
+		};
+		3018 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				F57A00CE /* WallpaperFilter.swift */,
+			);
+			path = Filters;
+			sourceTree = "<group>";
+		};
+		3020 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				2009 /* SimpleDownloader.swift */,
+				200A /* DefaultDownloader.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		3021 /* Wallhaven */ = {
+			isa = PBXGroup;
+			children = (
+				200B /* WallhavenSource.swift */,
+			);
+			path = Wallhaven;
+			sourceTree = "<group>";
+		};
+		3022 /* Unsplash */ = {
+			isa = PBXGroup;
+			children = (
+				200C /* UnsplashSource.swift */,
+			);
+			path = Unsplash;
+			sourceTree = "<group>";
+		};
+		3023 /* Bing */ = {
+			isa = PBXGroup;
+			children = (
+				200D /* BingSource.swift */,
+			);
+			path = Bing;
+			sourceTree = "<group>";
+		};
+		3024 /* Reddit */ = {
+			isa = PBXGroup;
+			children = (
+				200E /* RedditSource.swift */,
+			);
+			path = Reddit;
+			sourceTree = "<group>";
+		};
+		3025 /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				200F /* LocalSource.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		3026 /* ArtStation */ = {
+			isa = PBXGroup;
+			children = (
+				F8EF4955 /* ArtStationSource.swift */,
+			);
+			path = ArtStation;
+			sourceTree = "<group>";
+		};
+		3030 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2012 /* Wallpaper.swift */,
+				2013 /* WallpaperHistory.swift */,
+				2014 /* WallpaperFavorite.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5000 /* VarietyMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8001 /* Build configuration list for PBXNativeTarget "VarietyMacOS" */;
+			buildPhases = (
+				4000 /* Sources */,
+				4001 /* Frameworks */,
+				4002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VarietyMacOS;
+			productName = VarietyMacOS;
+			productReference = 2000 /* VarietyMacOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FD670DEC2FA59A25003D7A5F /* VarietyMacOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD670DF32FA59A25003D7A5F /* Build configuration list for PBXNativeTarget "VarietyMacOSTests" */;
+			buildPhases = (
+				FD670DE92FA59A25003D7A5F /* Sources */,
+				FD670DEA2FA59A25003D7A5F /* Frameworks */,
+				FD670DEB2FA59A25003D7A5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FD670DF22FA59A25003D7A5F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FD670DEE2FA59A25003D7A5F /* VarietyMacOSTests */,
+			);
+			name = VarietyMacOSTests;
+			packageProductDependencies = (
+			);
+			productName = VarietyMacOSTests;
+			productReference = FD670DED2FA59A25003D7A5F /* VarietyMacOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6000 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					5000 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					FD670DEC2FA59A25003D7A5F = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 5000;
+					};
+				};
+			};
+			buildConfigurationList = 8000 /* Build configuration list for PBXProject "VarietyMacOS" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3000;
+			productRefGroup = 3002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5000 /* VarietyMacOS */,
+				FD670DEC2FA59A25003D7A5F /* VarietyMacOSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD670DEB2FA59A25003D7A5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1001,
+				1002,
+				1003,
+				1004,
+				1005,
+				1006,
+				1007,
+				1008,
+				1009,
+				100A,
+				100B,
+				100C,
+				100D,
+				100E,
+				FD670DE82FA3B820003D7A5F,
+				100F,
+				1010,
+				1011,
+				1012,
+				1013,
+				1014,
+				1015,
+				1016,
+				1017,
+				1018,
+				1019,
+				101A,
+				F8EF4954,
+				862BED1B,
+				F57A00CD,
+				46F3EF88,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD670DE92FA59A25003D7A5F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FD670DF22FA59A25003D7A5F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5000 /* VarietyMacOS */;
+			targetProxy = FD670DF12FA59A25003D7A5F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		7001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		7002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VarietyMacOS/VarietyMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VarietyMacOS/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourname.variety-macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VarietyMacOS/VarietyMacOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VarietyMacOS/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourname.variety-macos";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FD670DF42FA59A25003D7A5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "cyan.VarietyMacOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
+			};
+			name = Debug;
+		};
+		FD670DF52FA59A25003D7A5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "cyan.VarietyMacOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList/* Begin XCConfigurationList section */
+		8000 /* Build configuration list for PBXProject "VarietyMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7000 /* Debug */,
+				7001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8001 /* Build configuration list for PBXNativeTarget "VarietyMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7002 /* Debug */,
+				7003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FD670DF32FA59A25003D7A5F /* Build configuration list for PBXNativeTarget "VarietyMacOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD670DF42FA59A25003D7A5F /* Debug */,
+				FD670DF52FA59A25003D7A5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6000 /* Project object */;
+}

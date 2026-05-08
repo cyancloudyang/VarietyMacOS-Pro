@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.terminology</key>
+    <string>
+        VarietyMacOS terminology
+    </string>
+    <key>com.apple.scripting</key>
+    <dict>
+        <key>commands</key>
+        <dict>
+            <key>next</key>
+            <dict>
+                <key>description</key>
+                <string>Show next wallpaper</string>
+                <key>result</key>
+                <string>text</string>
+            </dict>
+            <key>previous</key>
+            <dict>
+                <key>description</key>
+                <string>Show previous wallpaper</string>
+                <key>result</key>
+                <string>text</string>
+            </dict>
+            <key>pause</key>
+            <dict>
+                <key>description</key>
+                <string>Pause automatic wallpaper changes</string>
+                <key>result</key>
+                <string>text</string>
+            </dict>
+            <key>resume</key>
+            <dict>
+                <key>description</key>
+                <string>Resume automatic wallpaper changes</string>
+                <key>result</key>
+                <string>text</string>
+            </dict>
+            <key>info</key>
+            <dict>
+                <key>description</key>
+                <string>Get current wallpaper information</string>
+                <key>result</key>
+                <string>text</string>
+            </dict>
+            <key>set</key>
+            <dict>
+                <key>description</key>
+                <string>Set wallpaper from path</string>
+                <key>result</key>
+                <string>text</string>
+                <key>directParameter</key>
+                <dict>
+                    <key>type</key>
+                    <string>text</string>
+                    <key>description</key>
+                    <string>Path to wallpaper image</string>
+                </dict>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>
