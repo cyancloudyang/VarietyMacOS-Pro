@@ -34,29 +34,35 @@ final class WallpaperManager: ObservableObject {
 private init() {
     loadLastWallpaper()
     setupTimer()
+    setupMemoryWarningObserver()
 }
     
 // MARK: - Timer Setup
 
-private static var isTimerSetup = false
+    private static var isTimerSetup = false
 
-private func setupTimer() {
-    // Only set up the callback once
-    guard !WallpaperManager.isTimerSetup else { return }
-    WallpaperManager.isTimerSetup = true
-    
-    WallpaperTimer.shared.onTimerFired = { [weak self] in
-        Task { @MainActor in
-            await self?.nextWallpaper()
+    private func setupTimer() {
+        // Only set up the callback once
+        guard !WallpaperManager.isTimerSetup else { return }
+        WallpaperManager.isTimerSetup = true
+
+        WallpaperTimer.shared.onTimerFired = { [weak self] in
+            Task { @MainActor in
+                await self?.nextWallpaper()
+            }
+        }
+
+        // Start timer if enabled
+        if Preferences.shared.changeInterval > 0 {
+            WallpaperTimer.shared.start(interval: Preferences.shared.changeInterval)
         }
     }
 
-    // Start timer if enabled
-    if Preferences.shared.changeInterval > 0 {
-        WallpaperTimer.shared.start(interval: Preferences.shared.changeInterval)
+    private func setupMemoryWarningObserver() {
+        // Intentionally empty - macOS handles memory automatically
+        // Memory is freed via clearCachedImage() calls after applyWallpaper
     }
-}
-    
+
     // MARK: - Wallpaper Operations
     
     /// Load the next wallpaper
@@ -182,13 +188,16 @@ private func setupTimer() {
                 setWallpaper(image: image)
                 currentWallpaper = wallpaper
 
-                // Save to history
-                WallpaperHistory.shared.add(wallpaper)
+// Save to history
+            WallpaperHistory.shared.add(wallpaper)
+            
+            // Clear cached image to free memory
+            wallpaper.clearCachedImage()
 
-                // Show notification if enabled
-                if Preferences.shared.showNotifications {
-                    showNotification(for: wallpaper)
-                }
+            // Show notification if enabled
+            if Preferences.shared.showNotifications {
+                showNotification(for: wallpaper)
+            }
             }
             print("✓ applyWallpaper() completed")
         } catch {

@@ -143,9 +143,14 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
         aspectRatio > 1.0
     }
     
-    // MARK: - Methods
-    
-    /// Load the full image
+// MARK: - Methods
+
+/// Clear the cached image to free memory
+func clearCachedImage() {
+    cachedImage = nil
+}
+
+/// Load the full image
     func loadImage() async throws -> NSImage {
         // Check cache first
         if let cached = cachedImage {

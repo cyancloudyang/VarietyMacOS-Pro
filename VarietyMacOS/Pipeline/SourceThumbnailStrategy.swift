@@ -8,7 +8,7 @@ public actor SourceThumbnailStrategy {
     private let cache = ThumbnailCache()
     
     /// Returns nil if wallpaper.thumbnailURL is nil (caller falls back to LocalResizeStrategy)
-    public func fetchThumbnail(for wallpaper: Wallpaper) async throws -> ThumbnailResult? {
+    func fetchThumbnail(for wallpaper: Wallpaper) async throws -> ThumbnailResult? {
         guard let thumbnailURL = wallpaper.thumbnailURL else {
             return nil
         }
@@ -16,7 +16,7 @@ public actor SourceThumbnailStrategy {
         let dedupKey = "\(wallpaper.id)-thumb"
         
         // Check cache first
-        if let cached = cache.get(key: dedupKey) {
+        if let cached = await cache.get(key: dedupKey) {
             return ThumbnailResult(image: cached, source: .remote(thumbnailURL))
         }
         
@@ -44,8 +44,8 @@ public actor SourceThumbnailStrategy {
                 throw ThumbnailError.invalidImageData
             }
             
-            // Cache the result
-            await self.cache.set(key: dedupKey, image: image)
+// Cache the result
+        try await self.cache.set(key: dedupKey, image: image)
             
             return image
         }
@@ -61,13 +61,13 @@ public actor SourceThumbnailStrategy {
         }
     }
     
-    public func cancelDownload(for wallpaper: Wallpaper) {
+    func cancelDownload(for wallpaper: Wallpaper) {
         let dedupKey = "\(wallpaper.id)-thumb"
         activeDownloads[dedupKey]?.cancel()
         activeDownloads.removeValue(forKey: dedupKey)
     }
     
-    public func cancelAllDownloads() {
+    func cancelAllDownloads() {
         activeDownloads.values.forEach { $0.cancel() }
         activeDownloads.removeAll()
     }

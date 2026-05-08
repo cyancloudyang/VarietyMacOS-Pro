@@ -16,7 +16,7 @@ public actor LocalResizeStrategy {
     ///   - url: URL to the full-size image
     ///   - targetSize: Maximum dimensions for the thumbnail (preserves aspect ratio)
     /// - Returns: ThumbnailResult with the generated thumbnail
-    public func generateThumbnail(
+    func generateThumbnail(
         from url: URL,
         targetSize: CGSize? = nil
     ) async throws -> ThumbnailResult {
@@ -103,7 +103,7 @@ extension NSImage {
         )
         
         let resizedImage = NSImage(size: newSize, flipped: false) { rect in
-            self.draw(in: rect, from: NSRect(origin: .zero, size: self.size), fraction: 1.0, operation: .copy)
+            self.draw(in: rect, from: NSRect(origin: .zero, size: self.size), operation: .copy, fraction: 1.0)
             return true
         }
         

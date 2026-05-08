@@ -18,10 +18,13 @@ final class ImageCacheManager {
     private let maxMemoryItems = 50
     private let maxDiskSizeMB: UInt64 = 500
     
-    // CIContext for hardware-accelerated image processing
-    private let ciContext: CIContext
-    
-    private init() {
+  // CIContext for hardware-accelerated image processing
+  private let ciContext: CIContext
+
+  // Thumbnail pipeline for thumbnail generation
+  private let thumbnailPipeline = ThumbnailPipeline()
+
+  private init() {
         memoryCache.countLimit = maxMemoryItems
         
         // Disk cache directory in user's cache
@@ -114,54 +117,71 @@ final class ImageCacheManager {
         Logger.debug("Memory cache cleared")
     }
     
-    /// Get cache statistics
-    func getCacheStats() -> (memoryCount: Int, diskSizeMB: Double) {
-        let memoryCount = 0 // NSCache count not directly accessible
-        
-        var diskSizeMB: Double = 0
-        if let files = try? FileManager.default.contentsOfDirectory(at: diskCachePath, includingPropertiesForKeys: [.fileSizeKey]) {
-            var totalSize: UInt64 = 0
-            for file in files {
-                if let size = try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize {
-                    totalSize += UInt64(size)
-                }
-            }
-            diskSizeMB = Double(totalSize) / (1024.0 * 1024.0)
+  /// Get cache statistics
+  func getCacheStats() -> (memoryCount: Int, diskSizeMB: Double) {
+    let memoryCount = 0 // NSCache count not directly accessible
+
+    var diskSizeMB: Double = 0
+    if let files = try? FileManager.default.contentsOfDirectory(at: diskCachePath, includingPropertiesForKeys: [.fileSizeKey]) {
+      var totalSize: UInt64 = 0
+      for file in files {
+        if let size = try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+          totalSize += UInt64(size)
         }
-        
-        return (memoryCount, diskSizeMB)
+      }
+      diskSizeMB = Double(totalSize) / (1024.0 * 1024.0)
     }
-    
-    // MARK: - Private Methods
-    
-    /// Decode image using Core Image (M-chip hardware acceleration)
-    private func decodeImageWithCoreImage(_ data: Data) -> NSImage? {
-        guard let ciImage = CIImage(data: data) else { return nil }
-        
-        guard let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
-            return nil
-        }
-        
-        return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+
+    return (memoryCount, diskSizeMB)
+  }
+
+  // MARK: - Thumbnail Pipeline Delegation
+
+  /// Get thumbnail for a wallpaper using the thumbnail pipeline
+  func cachedThumbnail(for wallpaper: Wallpaper) async throws -> ThumbnailResult? {
+    return try await thumbnailPipeline.thumbnail(for: wallpaper)
+  }
+
+  /// Pre-warm thumbnail cache for multiple wallpapers
+  func prewarmThumbnails(for wallpapers: [Wallpaper]) async {
+    await thumbnailPipeline.prewarmCache(for: wallpapers)
+  }
+
+/// Clear all cached thumbnails
+    func clearThumbnailCache() async {
+        await thumbnailPipeline.clearCache()
     }
-    
-    /// Clean up old cache files
-    private func cleanupOldCache() async {
-        guard let files = try? FileManager.default.contentsOfDirectory(at: diskCachePath, includingPropertiesForKeys: [.contentAccessDateKey]) else {
-            return
-        }
-        
-        let now = Date()
-        let thirtyDays = TimeInterval(30 * 24 * 60 * 60)
-        
-        for file in files {
-            if let accessDate = try? file.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate,
-               accessDate < now - thirtyDays {
-                try? FileManager.default.removeItem(at: file)
-                Logger.debug("Cleaned up old cache: \(file.lastPathComponent)")
-            }
-        }
-    }
+
+// MARK: - Private Methods
+
+/// Decode image using Core Image (M-chip hardware acceleration)
+private func decodeImageWithCoreImage(_ data: Data) -> NSImage? {
+guard let ciImage = CIImage(data: data) else { return nil }
+
+guard let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
+return nil
+}
+
+return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+}
+
+/// Clean up old cache files
+private func cleanupOldCache() async {
+guard let files = try? FileManager.default.contentsOfDirectory(at: diskCachePath, includingPropertiesForKeys: [.contentAccessDateKey]) else {
+return
+}
+
+let now = Date()
+let thirtyDays = TimeInterval(30 * 24 * 60 * 60)
+
+for file in files {
+if let accessDate = try? file.resourceValues(forKeys: [.contentAccessDateKey]).contentAccessDate,
+accessDate < now - thirtyDays {
+try? FileManager.default.removeItem(at: file)
+Logger.debug("Cleaned up old cache: \(file.lastPathComponent)")
+}
+}
+}
 }
 
 // MARK: - Cache Helper
