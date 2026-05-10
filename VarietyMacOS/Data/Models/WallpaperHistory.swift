@@ -27,7 +27,10 @@ final class WallpaperHistory: ObservableObject {
             source: wallpaper.source
         )
         
-entries.insert(entry, at: 0)
+        entries.insert(entry, at: 0)
+
+        // Free memory: strip cachedImage from newly added entry
+        wallpaper.clearCachedImage()
 
         // Trim to max size
         if entries.count > maxEntries {
@@ -58,7 +61,17 @@ entries.insert(entry, at: 0)
     func recentEntries(count: Int = 10) -> [HistoryEntry] {
         Array(entries.prefix(count))
     }
-    
+
+    /// Prefetch thumbnails for recent history entries
+    func prefetchThumbnails() {
+        let recentWallpapers = entries.prefix(10).compactMap(\.wallpaper)
+        guard !recentWallpapers.isEmpty else { return }
+        Task {
+            let pipeline = ThumbnailPipeline()
+            await pipeline.prewarmCache(for: recentWallpapers)
+        }
+    }
+
     /// Get entries from a specific date range
     func entries(from startDate: Date, to endDate: Date) -> [HistoryEntry] {
         entries.filter { entry in

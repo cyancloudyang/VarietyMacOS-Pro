@@ -101,19 +101,22 @@ final class ImageCacheManager {
     /// Clear all caches
     func clearCache() {
         memoryCache.removeAllObjects()
-        
+
         try? FileManager.default.removeItem(at: diskCachePath)
         try? FileManager.default.createDirectory(at: diskCachePath, withIntermediateDirectories: true)
-        
+
         try? FileManager.default.removeItem(at: tempCachePath)
         try? FileManager.default.createDirectory(at: tempCachePath, withIntermediateDirectories: true)
-        
+
+        Task { await thumbnailPipeline.clearCache() }
+
         Logger.info("Cache cleared")
     }
     
     /// Clear memory cache only
     func clearMemoryCache() {
         memoryCache.removeAllObjects()
+        Task { await thumbnailPipeline.clearCache() }
         Logger.debug("Memory cache cleared")
     }
     
