@@ -36,6 +36,7 @@ struct VarietyMacOSApp: App {
 @available(macOS 13.0, *)
 struct ContentView: View {
     @EnvironmentObject var wallpaperManager: WallpaperManager
+    @ObservedObject var history = WallpaperHistory.shared
     @State private var showingSettings = false
     @State private var currentStatus = "Ready"
     @State private var debugMode = false
@@ -71,11 +72,14 @@ struct ContentView: View {
                             .cornerRadius(12)
                     }
                     
-                    // Sources info
-                    sourcesCard
-                        .padding()
-                        .background(Color(.windowBackgroundColor))
-                        .cornerRadius(12)
+    // Sources info
+    sourcesCard
+      .padding()
+      .background(Color(.windowBackgroundColor))
+      .cornerRadius(12)
+
+    // Recent history
+    recentHistoryCard
                 }
                 .padding()
             }
@@ -133,45 +137,89 @@ if let wallpaper = wallpaperManager.currentWallpaper,
                     .cornerRadius(8)
                     .clipped()
                 
-                // Wallpaper information panel
-                VStack(alignment: .leading, spacing: 6) {
-                    // Title
-                    Text(wallpaper.title ?? "Unknown")
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .lineLimit(2)
-                    
-                    // Source badge
-                    HStack {
-                        Image(systemName: wallpaper.source.iconName)
-                            .font(.caption2)
-                        Text(wallpaper.source.displayName)
-                            .font(.caption2)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(4)
-                    
-                    // Description if available
-                    if let description = wallpaper.description, !description.isEmpty {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(2)
-                    }
-                    
-                    // Image info
-                    HStack(spacing: 12) {
-                        Text("\(image.size.width.toInt())x\(image.size.height.toInt())")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        Text("\(Int(image.size.width * image.size.height * 4 / 1024)) KB")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding(.top, 8)
+// Wallpaper information panel with ViewThatFits
+ViewThatFits(in: .horizontal) {
+// Full view (large window)
+VStack(alignment: .leading, spacing: 6) {
+Text(wallpaper.title ?? "Unknown")
+.font(.body)
+.fontWeight(.medium)
+.lineLimit(2)
+
+HStack {
+Image(systemName: wallpaper.source.iconName)
+.font(.caption2)
+Text(wallpaper.source.displayName)
+.font(.caption2)
+}
+.padding(.horizontal, 8)
+.padding(.vertical, 4)
+.background(Color.accentColor.opacity(0.1))
+.cornerRadius(4)
+
+if let author = wallpaper.author {
+Text("by \(author)")
+.font(.caption)
+.foregroundColor(.secondary)
+}
+
+if let colors = wallpaper.colors, !colors.isEmpty {
+HStack(spacing: 4) {
+ForEach(Array(colors.prefix(6)), id: \.self) { hex in
+Circle()
+.fill(hexColor(hex: hex))
+.frame(width: 16, height: 16)
+}
+if colors.count > 6 {
+Text("+\(colors.count - 6)")
+.font(.caption2)
+.foregroundColor(.secondary)
+}
+}
+.padding(.top, 2)
+}
+
+HStack(spacing: 12) {
+Text("\(Int(image.size.width))x\(Int(image.size.height))")
+.font(.caption2)
+.foregroundColor(.secondary)
+if let views = wallpaper.views {
+Text("\(NumberFormatter().string(from: NSNumber(value: views)) ?? "\(views)") views")
+.font(.caption2)
+.foregroundColor(.secondary)
+}
+if let favorites = wallpaper.favorites {
+Text("❤️ \(NumberFormatter().string(from: NSNumber(value: favorites)) ?? "\(favorites)")")
+.font(.caption2)
+.foregroundColor(.secondary)
+}
+}
+}
+
+// Compact view (small window)
+VStack(alignment: .leading, spacing: 4) {
+Text(wallpaper.title ?? "Unknown")
+.font(.body)
+.fontWeight(.medium)
+.lineLimit(1)
+
+HStack {
+Image(systemName: wallpaper.source.iconName)
+.font(.caption2)
+Text(wallpaper.source.displayName)
+.font(.caption2)
+}
+.padding(.horizontal, 6)
+.padding(.vertical, 3)
+.background(Color.accentColor.opacity(0.1))
+.cornerRadius(4)
+
+Text("\(Int(image.size.width))x\(Int(image.size.height))")
+.font(.caption2)
+.foregroundColor(.secondary)
+}
+}
+.padding(.top, 8)
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "photo")
@@ -287,41 +335,98 @@ private var quickActionsCard: some View {
         }
     }
     
-    // MARK: - Sources Card
-    
-    private var sourcesCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Enabled Sources")
-                    .font(.headline)
-                Spacer()
-                Button(action: { showingSettings = true }) {
-                    Text("Edit")
-                        .font(.caption)
-                }
-            }
-            
-            if let sources = Preferences.shared.enabledSources as? [WallpaperSourceType], !sources.isEmpty {
-                FlowLayout {
-                    ForEach(sources, id: \.self) { sourceType in
-                        HStack {
-                            Image(systemName: sourceType.iconName)
-                            Text(sourceType.displayName)
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Color.accentColor.opacity(0.1))
-                        .cornerRadius(6)
-                    }
-                }
-            } else {
-                Text("No sources enabled")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            }
-        }
+// MARK: - Sources Card
+
+private var sourcesCard: some View {
+  VStack(alignment: .leading, spacing: 12) {
+    HStack {
+      Text("Enabled Sources")
+        .font(.headline)
+      Spacer()
+      Button(action: { showingSettings = true }) {
+        Text("Edit")
+          .font(.caption)
+      }
     }
+
+    if let sources = Preferences.shared.enabledSources as? [WallpaperSourceType], !sources.isEmpty {
+      FlowLayout {
+        ForEach(sources, id: \.self) { sourceType in
+          HStack {
+            Image(systemName: sourceType.iconName)
+            Text(sourceType.displayName)
+          }
+          .font(.caption)
+          .padding(.horizontal, 10)
+          .padding(.vertical, 5)
+          .background(Color.accentColor.opacity(0.1))
+          .cornerRadius(6)
+        }
+      }
+    } else {
+      Text("No sources enabled")
+        .foregroundColor(.secondary)
+        .font(.caption)
+    }
+  }
+}
+
+// MARK: - Recent History Card
+
+private var recentHistoryCard: some View {
+  VStack(alignment: .leading, spacing: 12) {
+    HStack {
+      Text("Recent History")
+        .font(.headline)
+      Spacer()
+    }
+
+    if history.recentEntries(count: 5).isEmpty {
+      VStack(spacing: 8) {
+        Image(systemName: "clock")
+          .font(.system(size: 32))
+          .foregroundColor(.secondary)
+        Text("No history yet")
+          .font(.body)
+          .foregroundColor(.secondary)
+        Text("Click 'Next Wallpaper' to start")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+      .frame(maxWidth: .infinity, minHeight: 100)
+} else {
+VStack(spacing: 8) {
+ForEach(history.recentEntries(count: 5)) { entry in
+HStack(spacing: 12) {
+if let wallpaper = entry.wallpaper {
+ThumbnailImageView(wallpaper: wallpaper)
+.frame(width: 40, height: 40)
+} else {
+Image(systemName: "questionmark.circle")
+.foregroundColor(.secondary)
+.frame(width: 40, height: 40)
+}
+
+VStack(alignment: .leading, spacing: 4) {
+Text(entry.wallpaper?.displayTitle ?? "Untitled")
+.font(.body)
+.lineLimit(1)
+Text(entry.timestamp, style: .date)
+.font(.caption)
+.foregroundColor(.secondary)
+}
+
+Spacer()
+}
+.padding(.vertical, 4)
+}
+}
+}
+}
+  .padding()
+  .background(Color(.windowBackgroundColor))
+  .cornerRadius(12)
+}
 }
 
 // MARK: - Test Source Card (Debug Tool)
@@ -575,6 +680,63 @@ struct FlowLayout: Layout {
             currentX += size.width + 8
         }
     }
+}
+
+// MARK: - Color Helper
+
+extension Color {
+init(hex: String) {
+let hex = hex.trimmingCharacters(in: .alphanumerics.inverted)
+var int: UInt64 = 0
+Scanner(string: hex).scanHexInt64(&int)
+let a = Double((int >> 24) & 0xFF) / 255.0
+let r = Double((int >> 16) & 0xFF) / 255.0
+let g = Double((int >> 8) & 0xFF) / 255.0
+let b = Double(int & 0xFF) / 255.0
+self.init(red: r, green: g, blue: b, opacity: a)
+}
+}
+
+func hexColor(hex: String) -> Color {
+Color(hex: hex.hasPrefix("#") ? hex : "#\(hex)")
+}
+
+// MARK: - ThumbnailImageView Helper
+
+struct ThumbnailImageView: View {
+let wallpaper: Wallpaper
+@State private var thumbnail: NSImage?
+@State private var isLoading = true
+@State private var hasError = false
+
+var body: some View {
+Group {
+if isLoading {
+ProgressView()
+.scaleEffect(0.5)
+} else if let image = thumbnail {
+Image(nsImage: image)
+.resizable()
+.aspectRatio(contentMode: .fill)
+} else {
+Image(systemName: "photo")
+.foregroundColor(.secondary)
+}
+}
+.frame(width: 40, height: 40)
+.cornerRadius(4)
+.clipped()
+.task {
+do {
+let pipeline = ThumbnailPipeline()
+let result = try await pipeline.thumbnail(for: wallpaper)
+thumbnail = result.image
+} catch {
+hasError = true
+}
+isLoading = false
+}
+}
 }
 
 // MARK: - App Delegate
