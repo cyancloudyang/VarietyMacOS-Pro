@@ -59,8 +59,20 @@ private init() {
     }
 
     private func setupMemoryWarningObserver() {
-        // Intentionally empty - macOS handles memory automatically
-        // Memory is freed via clearCachedImage() calls after applyWallpaper
+        let source = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
+        source.setEventHandler { [weak self] in
+            guard let self else { return }
+            for wallpaper in self.wallpaperHistory where wallpaper !== self.currentWallpaper {
+                wallpaper.clearCachedImage()
+            }
+            for entry in WallpaperHistory.shared.entries {
+                if entry.wallpaper !== self.currentWallpaper {
+                    entry.wallpaper?.clearCachedImage()
+                }
+            }
+            Logger.info("Memory warning received — cleared non-current cachedImages")
+        }
+        source.resume()
     }
 
     // MARK: - Wallpaper Operations
@@ -101,15 +113,18 @@ private init() {
         await applyWallpaper(wallpaperHistory[historyIndex])
     }
     
-/// Fetch a new wallpaper from enabled sources with retry mechanism
-    @MainActor
-    private func fetchNewWallpaper() async {
-        guard !isLoading else {
-            print("⚠️ Already loading, skipping")
-            return
-        }
-
-        isLoading = true
+  /// Fetch a new wallpaper from enabled sources with retry mechanism
+  @MainActor
+  private func fetchNewWallpaper() async {
+    guard !isLoading else {
+      print("⚠️ Already loading, skipping")
+      return
+    }
+    
+    // Clear old wallpaper cache to free memory before fetching new one
+    currentWallpaper?.clearCachedImage()
+    
+    isLoading = true
         error = nil
         print("🔴 isLoading set to true")
 
@@ -118,35 +133,27 @@ private init() {
             print("🟢 isLoading set to false (defer)")
         }
 
-        // Try up to 5 times with different sources (increased from 3)
-        let maxRetries = 5
+        // Try up to 3 times with different sources (reduced from 5)
+        let maxRetries = 3
         var lastError: Error? = nil
         var attemptedSources: Set<String> = []
 
         for attempt in 1...maxRetries {
-            let source = getNextSource()
+            // Get next source, excluding previously failed ones
+            let source = getNextSource(excluding: attemptedSources)
             let sourceKey = source.sourceID
-            
-            // Skip if this source was already tried in this cycle
-            if attemptedSources.contains(sourceKey) {
-                if attempt < maxRetries {
-                    continue
-                }
-                break
-            }
-            attemptedSources.insert(sourceKey)
-            
+
             print("📥 Attempt \(attempt)/\(maxRetries): Fetching from \(source.displayName)...")
 
             do {
                 let wallpaper = try await source.fetchWallpaper()
                 print("✓ Fetched: \(wallpaper.title ?? "Untitled")")
-                
+
                 // Validate wallpaper has valid URL
                 guard wallpaper.remoteURL != nil || wallpaper.localURL != nil else {
                     throw NSError(domain: "WallpaperManager", code: -2, userInfo: [NSLocalizedDescriptionKey: "Invalid wallpaper - no URL"])
                 }
-                
+
                 wallpaperHistory.append(wallpaper)
                 historyIndex = wallpaperHistory.count - 1
                 print("🖼️ Applying to desktop...")
@@ -155,8 +162,9 @@ private init() {
                 return // Success! Exit the function
             } catch {
                 lastError = error
+                attemptedSources.insert(sourceKey)
                 print("✗ Attempt \(attempt) failed: \(error.localizedDescription)")
-                
+
                 // Add small delay before retry to avoid rate limiting
                 if attempt < maxRetries {
                     print("🔄 Retrying with different source...")
@@ -169,7 +177,7 @@ private init() {
         print("✗ All \(maxRetries) attempts failed")
         let errorMessage = lastError?.localizedDescription ?? "Unknown error"
         self.error = WallpaperError.fetchFailed(lastError ?? NSError(domain: "WallpaperManager", code: -1, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
-        
+
         // Show notification to user
         showNotification(title: "Failed to Fetch Wallpaper", body: "Could not fetch wallpaper after \(maxRetries) attempts. Please check your network connection.")
     }
@@ -183,22 +191,19 @@ private init() {
             let image = try await loadImage(for: wallpaper)
             print("🖼️ Image loaded, size: \(image.size)")
 
-            await MainActor.run {
-                print("🖼️ Setting wallpaper on desktop...")
-                setWallpaper(image: image)
-                currentWallpaper = wallpaper
-
-// Save to history
-            WallpaperHistory.shared.add(wallpaper)
-            
-            // Clear cached image to free memory
-            wallpaper.clearCachedImage()
-
-            // Show notification if enabled
-            if Preferences.shared.showNotifications {
-                showNotification(for: wallpaper)
-            }
-            }
+    await MainActor.run {
+      print("🖼️ Setting wallpaper on desktop...")
+      setWallpaper(image: image)
+      currentWallpaper = wallpaper
+      
+      // Save to history
+      WallpaperHistory.shared.add(wallpaper)
+      
+      // Show notification if enabled
+      if Preferences.shared.showNotifications {
+        showNotification(for: wallpaper)
+      }
+    }
             print("✓ applyWallpaper() completed")
         } catch {
             print("✗ applyWallpaper() error: \(error.localizedDescription)")
@@ -268,16 +273,45 @@ private func setWallpaper(image: NSImage) {
     
     // MARK: - Source Management
     
-    /// Get the next source to use based on preferences
-    private func getNextSource() -> WallpaperSource {
+    /// Get the next source to use based on preferences with priority-based selection
+    /// Priority: Bing first (most reliable, no API key needed), then others randomly
+    private func getNextSource(excluding excludedSources: Set<String> = []) -> WallpaperSource {
         let enabledSources = Preferences.shared.enabledSources
         guard !enabledSources.isEmpty else {
-            // Fallback to Bing if no sources enabled
+            print("📌 No enabled sources, using Bing as fallback")
             return BingSource()
         }
 
-        // Simple rotation for now - prefer Bing since it's more reliable
-        let sourceType = enabledSources.randomElement() ?? .bing
+        // Filter out excluded sources (ones that already failed)
+        let availableSources = enabledSources.filter { sourceType in
+            let source = sourceType.createSource()
+            let isExcluded = excludedSources.contains(source.sourceID)
+            let isAvailable = source.isAvailable()
+            if isExcluded {
+                print("🚫 Skipping \(source.displayName) - already failed this cycle")
+            }
+            if !isAvailable {
+                print("🚫 Skipping \(source.displayName) - not available")
+            }
+            return !isExcluded && isAvailable
+        }
+
+        guard !availableSources.isEmpty else {
+            // All sources excluded or unavailable, fallback to Bing
+            print("📌 All sources excluded/unavailable, using Bing as fallback")
+            return BingSource()
+        }
+
+        // Priority: Bing first if enabled, then random from remaining
+        let sourceType: WallpaperSourceType
+        if availableSources.contains(.bing) {
+            sourceType = .bing
+            print("🎯 Selecting Bing (priority source)")
+        } else {
+            sourceType = availableSources.randomElement() ?? .bing
+            print("🎯 Selecting \(sourceType.displayName) (random from available)")
+        }
+
         return sourceType.createSource()
     }
     
