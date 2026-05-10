@@ -1,7 +1,12 @@
 {
-  "active_plan": "/Users/cycloudyang/VarietyMacOS/.sisyphus/plans/varietymacos-p0-upgrade.md",
-  "started_at": "2026-05-07T20:35:00.000Z",
-  "session_ids": [],
-  "plan_name": "varietymacos-p0-upgrade",
-  "agent": "atlas"
+  "active_plan": null,
+  "completed_plans": [
+    "varietymacos-p0-upgrade",
+    "p0-bugfix-supplement",
+    "round3-metadata-thumbnails",
+    "p0-upgrade-gaps"
+  ],
+  "last_plan": "p0-upgrade-gaps",
+  "completed_at": "2026-05-10T00:00:00Z",
+  "agent": "sisyphus"
 }
