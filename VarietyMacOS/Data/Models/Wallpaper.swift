@@ -14,33 +14,43 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
     let resolution: CGSize
     let fileSize: Int?
     let createdAt: Date?
-    let upvotes: Int?
-    let subreddit: String?
-    
-    var remoteURL: URL?
+let upvotes: Int?
+let subreddit: String?
+@Published var tags: [String]?
+@Published var colors: [String]?
+@Published var views: Int?
+@Published var favorites: Int?
+@Published var fileType: String?
+
+var remoteURL: URL?
     var localURL: URL?
     var thumbnailURL: URL?
     
     @Published var cachedImage: NSImage?
     var downloadDate: Date?
     
-    init(
-        id: String,
-        source: WallpaperSourceType,
-        remoteURL: URL? = nil,
-        localURL: URL? = nil,
-        thumbnailURL: URL? = nil,
-        title: String? = nil,
-        description: String? = nil,
-        author: String? = nil,
-        authorURL: URL? = nil,
-        sourceURL: URL? = nil,
-        resolution: CGSize = CGSize(width: 1920, height: 1080),
-        fileSize: Int? = nil,
-        createdAt: Date? = nil,
-        upvotes: Int? = nil,
-        subreddit: String? = nil
-    ) {
+init(
+id: String,
+source: WallpaperSourceType,
+remoteURL: URL? = nil,
+localURL: URL? = nil,
+thumbnailURL: URL? = nil,
+title: String? = nil,
+description: String? = nil,
+author: String? = nil,
+authorURL: URL? = nil,
+sourceURL: URL? = nil,
+resolution: CGSize = CGSize(width: 1920, height: 1080),
+fileSize: Int? = nil,
+createdAt: Date? = nil,
+upvotes: Int? = nil,
+subreddit: String? = nil,
+tags: [String]? = nil,
+colors: [String]? = nil,
+views: Int? = nil,
+favorites: Int? = nil,
+fileType: String? = nil
+) {
         self.id = id
         self.source = source
         self.remoteURL = remoteURL
@@ -51,21 +61,27 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
         self.author = author
         self.authorURL = authorURL
         self.sourceURL = sourceURL
-        self.resolution = resolution
-        self.fileSize = fileSize
-        self.createdAt = createdAt
-        self.upvotes = upvotes
-        self.subreddit = subreddit
-    }
+self.resolution = resolution
+self.fileSize = fileSize
+self.createdAt = createdAt
+self.upvotes = upvotes
+self.subreddit = subreddit
+self.tags = tags
+self.colors = colors
+self.views = views
+self.favorites = favorites
+self.fileType = fileType
+}
     
     // MARK: - Codable
     
-    enum CodingKeys: String, CodingKey {
-        case id, source, title, description, author
-        case authorURL, sourceURL, resolution, fileSize, createdAt
-        case remoteURL, localURL, thumbnailURL
-        case downloadDate, upvotes, subreddit
-    }
+enum CodingKeys: String, CodingKey {
+case id, source, title, description, author
+case authorURL, sourceURL, resolution, fileSize, createdAt
+case remoteURL, localURL, thumbnailURL
+case downloadDate, upvotes, subreddit
+case tags, colors, views, favorites, fileType
+}
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -83,10 +99,15 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
         remoteURL = try container.decodeIfPresent(URL.self, forKey: .remoteURL)
         localURL = try container.decodeIfPresent(URL.self, forKey: .localURL)
         thumbnailURL = try container.decodeIfPresent(URL.self, forKey: .thumbnailURL)
-        downloadDate = try container.decodeIfPresent(Date.self, forKey: .downloadDate)
-        upvotes = try container.decodeIfPresent(Int.self, forKey: .upvotes)
-        subreddit = try container.decodeIfPresent(String.self, forKey: .subreddit)
-    }
+downloadDate = try container.decodeIfPresent(Date.self, forKey: .downloadDate)
+upvotes = try container.decodeIfPresent(Int.self, forKey: .upvotes)
+subreddit = try container.decodeIfPresent(String.self, forKey: .subreddit)
+tags = try container.decodeIfPresent([String].self, forKey: .tags)
+colors = try container.decodeIfPresent([String].self, forKey: .colors)
+views = try container.decodeIfPresent(Int.self, forKey: .views)
+favorites = try container.decodeIfPresent(Int.self, forKey: .favorites)
+fileType = try container.decodeIfPresent(String.self, forKey: .fileType)
+}
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -104,10 +125,15 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
         try container.encodeIfPresent(remoteURL, forKey: .remoteURL)
         try container.encodeIfPresent(localURL, forKey: .localURL)
         try container.encodeIfPresent(thumbnailURL, forKey: .thumbnailURL)
-        try container.encodeIfPresent(downloadDate, forKey: .downloadDate)
-        try container.encodeIfPresent(upvotes, forKey: .upvotes)
-        try container.encodeIfPresent(subreddit, forKey: .subreddit)
-    }
+try container.encodeIfPresent(downloadDate, forKey: .downloadDate)
+try container.encodeIfPresent(upvotes, forKey: .upvotes)
+try container.encodeIfPresent(subreddit, forKey: .subreddit)
+try container.encodeIfPresent(tags, forKey: .tags)
+try container.encodeIfPresent(colors, forKey: .colors)
+try container.encodeIfPresent(views, forKey: .views)
+try container.encodeIfPresent(favorites, forKey: .favorites)
+try container.encodeIfPresent(fileType, forKey: .fileType)
+}
     
     // MARK: - Computed Properties
     
@@ -139,9 +165,32 @@ final class Wallpaper: Identifiable, Codable, ObservableObject {
         return FileManager.default.fileExists(atPath: localPath)
     }
     
-    var isLandscape: Bool {
-        aspectRatio > 1.0
+var isLandscape: Bool {
+    aspectRatio > 1.0
+  }
+  
+  var colorSwatchesHex: [String] {
+    guard let colors = colors else { return [] }
+    return colors.prefix(6).map { hex in
+      hex.hasPrefix("#") ? hex : "#\(hex)"
     }
+  }
+  
+  var fileTypeDisplay: String {
+    guard let fileType = fileType else { return "Unknown" }
+    if fileType.contains("jpeg") { return "JPEG" }
+    if fileType.contains("png") { return "PNG" }
+    if fileType.contains("gif") { return "GIF" }
+    if fileType.contains("webp") { return "WebP" }
+    return fileType.uppercased()
+  }
+  
+  var viewsDisplay: String {
+    guard let views = views else { return "" }
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    return formatter.string(from: NSNumber(value: views)) ?? "\(views)"
+  }
     
 // MARK: - Methods
 

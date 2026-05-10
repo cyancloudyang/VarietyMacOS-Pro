@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		03263966A98EC7B19C8A6956 /* ThumbnailCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A292A842C8F8D4C40A40147E /* ThumbnailCache.swift */; };
 		05B3023F0DBC83422CFF769C /* ThumbnailTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6F3EF36937C38D590AED77 /* ThumbnailTypes.swift */; };
+		0B45871A432C3287E3A2F570 /* WallhavenSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD58D514132091753FB042FF /* WallhavenSettingsView.swift */; };
 		1001 /* VarietyMacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2001 /* VarietyMacOSApp.swift */; };
 		1002 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2002 /* MenuBarView.swift */; };
 		1003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2003 /* SettingsView.swift */; };
@@ -85,13 +86,14 @@
 		201A /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		201B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		201C /* VarietyMacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VarietyMacOS.entitlements; sourceTree = "<group>"; };
-		3C6F3EF36937C38D590AED77 /* ThumbnailTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Pipeline/ThumbnailTypes.swift"; sourceTree = "<group>"; };
+		3C6F3EF36937C38D590AED77 /* ThumbnailTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/ThumbnailTypes.swift; sourceTree = "<group>"; };
 		46F3EF89 /* VarietyMacOSScripting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VarietyMacOSScripting.swift; sourceTree = "<group>"; };
 		862BED1C /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
-		9459B1C83EF70375E7C6CB64 /* SourceThumbnailStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Pipeline/SourceThumbnailStrategy.swift"; sourceTree = "<group>"; };
-		A292A842C8F8D4C40A40147E /* ThumbnailCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Pipeline/ThumbnailCache.swift"; sourceTree = "<group>"; };
+		9459B1C83EF70375E7C6CB64 /* SourceThumbnailStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/SourceThumbnailStrategy.swift; sourceTree = "<group>"; };
+		A292A842C8F8D4C40A40147E /* ThumbnailCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/ThumbnailCache.swift; sourceTree = "<group>"; };
 		B20BF8F8767EC7AAAC0AC685 /* ThumbnailPipeline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/ThumbnailPipeline.swift; sourceTree = "<group>"; };
-		E05A0CD3A431AA69A5CC64C2 /* LocalResizeStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Pipeline/LocalResizeStrategy.swift"; sourceTree = "<group>"; };
+		CD58D514132091753FB042FF /* WallhavenSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WallhavenSettingsView.swift; path = VarietyMacOS/App/WallhavenSettingsView.swift; sourceTree = "<group>"; };
+		E05A0CD3A431AA69A5CC64C2 /* LocalResizeStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/LocalResizeStrategy.swift; sourceTree = "<group>"; };
 		F57A00CE /* WallpaperFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperFilter.swift; sourceTree = "<group>"; };
 		F8EF4955 /* ArtStationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtStationSource.swift; sourceTree = "<group>"; };
 		FD670DE72FA3B820003D7A5F /* DownloadError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadError.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				3001 /* VarietyMacOS */,
 				FD670DEE2FA59A25003D7A5F /* VarietyMacOSTests */,
 				3002 /* Products */,
+				CD58D514132091753FB042FF /* WallhavenSettingsView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -474,6 +477,7 @@
 				03263966A98EC7B19C8A6956 /* ThumbnailCache.swift in Sources */,
 				F1BF6E38AEFAA0379065C86B /* SourceThumbnailStrategy.swift in Sources */,
 				AD9106D3CEF14CFEBBD83180 /* LocalResizeStrategy.swift in Sources */,
+				0B45871A432C3287E3A2F570 /* WallhavenSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -151,23 +151,30 @@ struct WallhavenSource: WallpaperSource {
         return components.url!
     }
     
-    private func createWallpaper(from data: WallhavenWallpaper) async throws -> Wallpaper {
-        let wallpaper = Wallpaper(
-            id: "wallhaven_\(data.id)",
-            source: .wallhaven,
-            remoteURL: URL(string: data.path),
-            thumbnailURL: URL(string: data.thumbs.large),
-            title: data.category,
-            description: data.purity,
-            author: data.uploader?.username,
-            sourceURL: URL(string: data.url),
-            resolution: CGSize(
-                width: CGFloat(Int(data.resolution.width) ?? 1920),
-                height: CGFloat(Int(data.resolution.height) ?? 1080)
-            )
-        )
-        return wallpaper
-    }
+private func createWallpaper(from data: WallhavenWallpaper) async throws -> Wallpaper {
+    let wallpaper = Wallpaper(
+    id: "wallhaven_\(data.id)",
+    source: .wallhaven,
+    remoteURL: URL(string: data.path),
+    thumbnailURL: URL(string: data.thumbs.large),
+    title: data.category,
+    description: data.purity,
+    author: data.uploader?.username,
+    sourceURL: URL(string: data.url),
+    resolution: CGSize(
+      width: CGFloat(Int(data.resolution.width) ?? 1920),
+      height: CGFloat(Int(data.resolution.height) ?? 1080)
+    ),
+    fileSize: data.fileSize,
+    createdAt: ISO8601DateFormatter().date(from: data.createdAt) ?? Date(),
+    tags: data.tags?.map { $0.name },
+    colors: data.colors,
+    views: data.views,
+    favorites: data.favorites,
+    fileType: data.fileType
+    )
+    return wallpaper
+  }
 }
 
 // MARK: - Wallhaven API Models
