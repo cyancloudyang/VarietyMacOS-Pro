@@ -229,32 +229,32 @@ struct DownloadSettingsView: View {
 struct AboutSettingsView: View {
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "photo.fill")
+            Image(systemName: "photo.stack.fill")
                 .font(.system(size: 64))
                 .foregroundColor(.accentColor)
-            
-            Text("Variety")
+
+            Text("VarietyMacOS Pro")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
             Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
                 .foregroundColor(.secondary)
-            
-            Text("Beautiful wallpapers for your Mac")
+
+            Text("Pro wallpaper management for your Mac")
                 .foregroundColor(.secondary)
-            
+
             Divider()
                 .padding(.vertical)
-            
+
             HStack(spacing: 20) {
-                Link("Website", destination: URL(string: "https://github.com/variety")!)
-                Link("GitHub", destination: URL(string: "https://github.com/variety/variety")!)
-                Link("Report Issue", destination: URL(string: "https://github.com/variety/variety/issues")!)
+                Link("Website", destination: URL(string: "https://github.com/cyancloudyang/VarietyMacOS-Pro")!)
+                Link("GitHub", destination: URL(string: "https://github.com/cyancloudyang/VarietyMacOS-Pro")!)
+                Link("Report Issue", destination: URL(string: "https://github.com/cyancloudyang/VarietyMacOS-Pro/issues")!)
             }
-            
+
             Spacer()
-            
-            Text("© 2024 Variety Team")
+
+            Text("© 2025 cyancloudyang")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
