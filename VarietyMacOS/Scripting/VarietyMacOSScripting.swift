@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// AppleScript command handler for VarietyMacOS
-@available(macOS 13.0, *)
 class VarietyScripting: NSObject {
     static let shared = VarietyScripting()
     
@@ -57,7 +56,7 @@ class VarietyScripting: NSObject {
         Source: \(wallpaper.source.displayName)
         """
         
-        if let description = wallpaper.description {
+        if let description = wallpaper.wallpaperDescription {
             info += "\nDescription: \(description)"
         }
         
@@ -81,7 +80,7 @@ class VarietyScripting: NSObject {
                 source: .local,
                 localURL: fileURL,
                 title: fileURL.lastPathComponent,
-                description: nil,
+                wallpaperDescription: nil,
                 createdAt: Date()
             )
             

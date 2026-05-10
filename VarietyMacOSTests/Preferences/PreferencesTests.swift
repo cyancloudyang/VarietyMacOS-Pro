@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for Preferences
-@available(macOS 13.0, *)
 final class PreferencesTests: XCTestCase {
 
     // MARK: - Singleton Tests

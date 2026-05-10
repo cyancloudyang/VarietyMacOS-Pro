@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for FileManager extensions
-@available(macOS 13.0, *)
 final class FileManagerExtensionsTests: XCTestCase {
 
     // MARK: - File Extension Tests
@@ -40,7 +39,6 @@ final class FileManagerExtensionsTests: XCTestCase {
 }
 
 /// Tests for Logger
-@available(macOS 13.0, *)
 final class LoggerTests: XCTestCase {
 
     // MARK: - Logger Method Tests
@@ -79,7 +77,6 @@ final class LoggerTests: XCTestCase {
 }
 
 /// Tests for URL construction utilities
-@available(macOS 13.0, *)
 final class URLConstructionTests: XCTestCase {
 
     // MARK: - Reddit URL Tests
@@ -162,7 +159,6 @@ final class URLConstructionTests: XCTestCase {
 }
 
 /// Tests for common resolution helpers
-@available(macOS 13.0, *)
 final class ResolutionTests: XCTestCase {
 
     // MARK: - Common Resolution Tests

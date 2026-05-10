@@ -3,7 +3,6 @@ import Foundation
 import AppKit
 @testable import VarietyMacOS
 
-@available(macOS 13.0, *)
 struct ThumbnailPipelineIntegrationTests {
     
     @Test func testPipeline_fetchesFromSource() async throws {

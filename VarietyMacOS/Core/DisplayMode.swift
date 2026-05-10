@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// Display mode for wallpaper rendering
-@available(macOS 13.0, *)
 enum DisplayMode: String, CaseIterable, Codable, Identifiable {
     case fill = "fill"
     case fit = "fit"

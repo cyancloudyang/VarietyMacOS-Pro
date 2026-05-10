@@ -7,12 +7,12 @@
 
 import SwiftUI
 import AppKit
+import SwiftData
 
 @main
 struct VarietyMacOSApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
-    // Use the shared singleton directly
+
     private var wallpaperManager: WallpaperManager {
         WallpaperManager.shared
     }
@@ -22,20 +22,22 @@ struct VarietyMacOSApp: App {
             ContentView()
                 .environmentObject(wallpaperManager)
         }
+        .modelContainer(DataContainer.modelContainer)
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 450, height: 550)
 
         Settings {
             SettingsView()
         }
+        .modelContainer(DataContainer.modelContainer)
     }
 }
 
 // MARK: - Content View (Redesigned)
 
-@available(macOS 13.0, *)
 struct ContentView: View {
     @EnvironmentObject var wallpaperManager: WallpaperManager
+    @Environment(\.modelContext) private var modelContext
     @ObservedObject var history = WallpaperHistory.shared
     @State private var showingSettings = false
     @State private var currentStatus = "Ready"
@@ -87,6 +89,13 @@ struct ContentView: View {
         .frame(minWidth: 400, minHeight: 500)
         .sheet(isPresented: $showingSettings) {
             SettingsView()
+        }
+        .onAppear {
+            WallpaperHistory.shared.configure(with: modelContext)
+            WallpaperFavorite.shared.configure(with: modelContext)
+            Preferences.shared.configure(with: modelContext)
+            SourceConfigManager.shared.configure(with: modelContext)
+            DataContainer.ensureDefaults(in: modelContext)
         }
     }
     
@@ -349,9 +358,9 @@ private var sourcesCard: some View {
       }
     }
 
-    if let sources = Preferences.shared.enabledSources as? [WallpaperSourceType], !sources.isEmpty {
+        if !Preferences.shared.enabledSources.isEmpty {
       FlowLayout {
-        ForEach(sources, id: \.self) { sourceType in
+                ForEach(Preferences.shared.enabledSources, id: \.self) { sourceType in
           HStack {
             Image(systemName: sourceType.iconName)
             Text(sourceType.displayName)
@@ -431,7 +440,6 @@ Spacer()
 
 // MARK: - Test Source Card (Debug Tool)
 
-@available(macOS 13.0, *)
 struct TestSourceCard: View {
     @EnvironmentObject var wallpaperManager: WallpaperManager
     @State private var isTesting = false
@@ -593,7 +601,6 @@ struct TestSourceCard: View {
 
 // MARK: - Sources Card
 
-@available(macOS 13.0, *)
 struct SourcesCard: View {
     @StateObject private var preferences = Preferences.shared
 
@@ -605,13 +612,13 @@ struct SourcesCard: View {
                 Spacer()
             }
 
-            if preferences.enabledSources.isEmpty {
-                Text("No sources enabled")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            } else {
-                FlowLayout {
-                    ForEach(preferences.enabledSources, id: \.self) { sourceType in
+        if preferences.enabledSources.isEmpty {
+            Text("No sources enabled")
+                .foregroundColor(.secondary)
+                .font(.caption)
+        } else {
+            FlowLayout {
+                ForEach(preferences.enabledSources, id: \.self) { sourceType in
                         HStack {
                             Image(systemName: sourceType.iconName)
                             Text(sourceType.displayName)

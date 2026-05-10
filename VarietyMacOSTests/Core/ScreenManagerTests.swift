@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for ScreenManager
-@available(macOS 13.0, *)
 final class ScreenManagerTests: XCTestCase {
 
     // MARK: - Singleton Tests

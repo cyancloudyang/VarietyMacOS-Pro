@@ -2,7 +2,6 @@ import Foundation
 
 /// Reddit wallpaper source
 /// Fetches images from Reddit communities
-@available(macOS 13.0, *)
 struct RedditSource: WallpaperSource {
     var sourceID: String { "reddit" }
     var displayName: String { "Reddit" }
@@ -136,7 +135,7 @@ struct RedditSource: WallpaperSource {
             remoteURL: finalUrl,
             thumbnailURL: post.thumbnailURL,
             title: post.title,
-            description: post.selftext?.isEmpty == false ? post.selftext : nil,
+            wallpaperDescription: post.selftext?.isEmpty == false ? post.selftext : nil,
             author: post.author,
             sourceURL: URL(string: "\(baseURL)\(post.permalink)"),
             resolution: CGSize(

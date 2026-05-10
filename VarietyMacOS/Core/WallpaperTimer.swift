@@ -2,7 +2,6 @@ import Foundation
 import Combine
 
 /// Timer manager for automatic wallpaper changes
-@available(macOS 13.0, *)
 final class WallpaperTimer: ObservableObject {
     static let shared = WallpaperTimer()
     
@@ -128,10 +127,11 @@ final class WallpaperTimer: ObservableObject {
     // MARK: - Preference Observers
     
     private func setupPreferenceObservers() {
-        Preferences.shared.$changeInterval
+        Preferences.shared.$appPreferences
             .dropFirst()
-            .sink { [weak self] newInterval in
+            .sink { [weak self] newPrefs in
                 guard let self = self else { return }
+                let newInterval = newPrefs.changeInterval
                 if self.isRunning {
                     self.start(interval: newInterval)
                 } else {

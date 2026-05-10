@@ -1,7 +1,6 @@
 import Foundation
 
 /// Manages wallpaper downloads with queuing and progress tracking
-@available(macOS 13.0, *)
 final actor DownloadManager {
     static let shared = DownloadManager()
 
@@ -157,7 +156,6 @@ final actor DownloadManager {
 
 // MARK: - Download Task
 
-@available(macOS 13.0, *)
 final class DownloadTask {
     let id: String
     let wallpaper: Wallpaper

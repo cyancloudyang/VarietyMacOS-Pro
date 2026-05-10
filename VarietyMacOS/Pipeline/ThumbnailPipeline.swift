@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// Orchestrates thumbnail generation with caching and fallback strategies
-@available(macOS 13.0, *)
 public actor ThumbnailPipeline {
     private let cache: ThumbnailCache
     private let sourceStrategy: SourceThumbnailStrategy

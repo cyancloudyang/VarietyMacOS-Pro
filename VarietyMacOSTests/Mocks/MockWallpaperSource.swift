@@ -9,7 +9,6 @@ import Foundation
 @testable import VarietyMacOS
 
 /// Mock implementation of WallpaperSource for testing
-@available(macOS 13.0, *)
 struct MockWallpaperSource: WallpaperSource {
     var sourceID: String
     var displayName: String
@@ -82,7 +81,6 @@ struct MockWallpaperSource: WallpaperSource {
     }
 }
 
-@available(macOS 13.0, *)
 extension MockWallpaperSource {
     /// Builder for creating mock wallpapers with common test configurations
     static func builder(

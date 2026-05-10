@@ -2,7 +2,6 @@ import SwiftUI
 import Combine
 
 /// Settings view for configuring wallpaper sources and preferences
-@available(macOS 13.0, *)
 struct SettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var preferences = Preferences.shared
@@ -62,7 +61,6 @@ struct SettingsView: View {
 }
 
 // MARK: - General Settings
-@available(macOS 13.0, *)
 struct GeneralSettingsView: View {
     @StateObject private var preferences = Preferences.shared
     
@@ -98,7 +96,6 @@ struct GeneralSettingsView: View {
 }
 
 // MARK: - Sources Settings
-@available(macOS 13.0, *)
 struct SourcesSettingsView: View {
     @StateObject private var preferences = Preferences.shared
     @State private var showingAddSource = false
@@ -106,15 +103,15 @@ struct SourcesSettingsView: View {
     var body: some View {
         VStack {
             List {
-                ForEach(preferences.enabledSources, id: \.self) { sourceType in
-                    SourceConfigRow(sourceType: sourceType)
-                }
-                .onMove { from, to in
-                    preferences.enabledSources.move(fromOffsets: from, toOffset: to)
-                }
-                .onDelete { indexSet in
-                    preferences.enabledSources.remove(atOffsets: indexSet)
-                }
+                    ForEach(preferences.enabledSources, id: \.self) { sourceType in
+                        SourceConfigRow(sourceType: sourceType)
+                    }
+                    .onMove { from, to in
+                        preferences.enabledSources.move(fromOffsets: from, toOffset: to)
+                    }
+                    .onDelete { indexSet in
+                        preferences.enabledSources.remove(atOffsets: indexSet)
+                    }
             }
             
             HStack {
@@ -127,7 +124,7 @@ struct SourcesSettingsView: View {
                 Button("Configure Selected") {
                     // Open configuration for selected source
                 }
-                .disabled(preferences.enabledSources.isEmpty)
+                    .disabled(preferences.enabledSources.isEmpty)
             }
             .padding()
         }
@@ -138,7 +135,6 @@ struct SourcesSettingsView: View {
 }
 
 /// Row for source configuration
-@available(macOS 13.0, *)
 struct SourceConfigRow: View {
   let sourceType: WallpaperSourceType
   @StateObject private var preferences = Preferences.shared
@@ -186,7 +182,6 @@ struct SourceConfigRow: View {
 }
 
 // MARK: - Download Settings
-@available(macOS 13.0, *)
 struct DownloadSettingsView: View {
     @StateObject private var preferences = Preferences.shared
     
@@ -231,7 +226,6 @@ struct DownloadSettingsView: View {
 }
 
 // MARK: - About Settings
-@available(macOS 13.0, *)
 struct AboutSettingsView: View {
     var body: some View {
         VStack(spacing: 20) {
@@ -269,7 +263,6 @@ struct AboutSettingsView: View {
 }
 
 // MARK: - Add Source View
-@available(macOS 13.0, *)
 struct AddSourceView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var preferences = Preferences.shared
@@ -347,7 +340,6 @@ struct AddSourceView: View {
 }
 
 /// Button for source selection
-@available(macOS 13.0, *)
 struct SourceSelectionButton: View {
     let sourceType: WallpaperSourceType
     let isSelected: Bool
@@ -387,7 +379,6 @@ struct SourceSelectionButton: View {
 }
 
 // MARK: - Preferences Extension
-@available(macOS 13.0, *)
 extension Preferences {
     func isSourceEnabled(_ sourceType: WallpaperSourceType) -> Bool {
         switch sourceType {
@@ -446,7 +437,6 @@ extension Preferences {
 }
 
 // MARK: - Preview
-@available(macOS 13.0, *)
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()

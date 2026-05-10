@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for WallpaperHistory
-@available(macOS 13.0, *)
 final class WallpaperHistoryTests: XCTestCase {
 
     // MARK: - Singleton Tests
@@ -72,7 +71,6 @@ final class WallpaperHistoryTests: XCTestCase {
 }
 
 /// Tests for WallpaperFavorite
-@available(macOS 13.0, *)
 final class WallpaperFavoriteTests: XCTestCase {
 
     // MARK: - Singleton Tests
@@ -145,7 +143,6 @@ final class WallpaperFavoriteTests: XCTestCase {
 }
 
 /// Tests for WallpaperCache
-@available(macOS 13.0, *)
 final class WallpaperCacheTests: XCTestCase {
 
     // MARK: - Singleton Tests

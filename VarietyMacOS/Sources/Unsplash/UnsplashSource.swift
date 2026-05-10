@@ -2,7 +2,6 @@ import Foundation
 
 /// Unsplash wallpaper source
 /// Fetches high-quality photos from Unsplash API
-@available(macOS 13.0, *)
 struct UnsplashSource: WallpaperSource {
     var sourceID: String { "unsplash" }
     var displayName: String { "Unsplash" }
@@ -38,7 +37,7 @@ struct UnsplashSource: WallpaperSource {
                 remoteURL: url,
                 thumbnailURL: url,
                 title: "Unsplash Photo",
-                description: "Random photo from Unsplash",
+                wallpaperDescription: "Random photo from Unsplash",
                 author: "Unsplash Photographer",
                 sourceURL: url,
                 resolution: CGSize(width: 1920, height: 1080)
@@ -125,7 +124,7 @@ struct UnsplashSource: WallpaperSource {
             remoteURL: url,
             thumbnailURL: URL(string: photo.urls.small),
             title: photo.description ?? photo.altDescription,
-            description: photo.altDescription,
+            wallpaperDescription: photo.altDescription,
             author: photo.user.name,
             authorURL: URL(string: photo.user.links.html),
             sourceURL: sourceURL,

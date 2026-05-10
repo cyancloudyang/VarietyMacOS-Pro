@@ -1,7 +1,6 @@
 import Foundation
 
 /// Manages bandwidth throttling for downloads
-@available(macOS 13.0, *)
 actor ThrottlingManager {
     static let shared = ThrottlingManager()
     
@@ -92,7 +91,6 @@ actor ThrottlingManager {
 // MARK: - Token Bucket
 
 /// Token bucket for rate limiting
-@available(macOS 13.0, *)
 actor TokenBucket {
     private var tokens: Double
     private var rate: Double

@@ -2,7 +2,6 @@ import Foundation
 
 /// ArtStation wallpaper source - uses RSS feed for featured artworks
 /// Reference: Variety's ArtStationDownloader uses RSS feed from artstation.com
-@available(macOS 13.0, *)
 final class ArtStationSource: WallpaperSource {
     var displayName: String { "ArtStation" }
     var sourceID: String { "artstation" }
@@ -67,7 +66,7 @@ final class ArtStationSource: WallpaperSource {
             source: .artstation,
             remoteURL: imageUrl,
             title: item.title,
-            description: item.description,
+            wallpaperDescription: item.description,
             author: item.author,
             sourceURL: item.link
         )
@@ -104,7 +103,7 @@ final class ArtStationSource: WallpaperSource {
             source: .artstation,
             remoteURL: imageUrl,
             title: project.title,
-            description: project.user?.fullName,
+            wallpaperDescription: project.user?.fullName,
             author: project.user?.fullName,
             sourceURL: nil
         )

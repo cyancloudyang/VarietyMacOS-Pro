@@ -1,7 +1,6 @@
 import SwiftUI
 
 /// Wallhaven-specific settings view
-@available(macOS 13.0, *)
 struct WallhavenSettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var preferences = Preferences.shared
@@ -97,7 +96,6 @@ struct WallhavenSettingsView: View {
   }
 }
 
-@available(macOS 13.0, *)
 struct WallhavenSettingsView_Previews: PreviewProvider {
   static var previews: some View {
     WallhavenSettingsView()

@@ -2,7 +2,6 @@ import SwiftUI
 import Combine
 
 /// Main menu bar view for the Variety wallpaper app
-@available(macOS 13.0, *)
 struct MenuBarView: View {
     @StateObject private var wallpaperManager = WallpaperManager.shared
     @StateObject private var screenManager = ScreenManager.shared
@@ -97,7 +96,6 @@ struct MenuBarView: View {
 }
 
 /// Preview of current wallpaper
-@available(macOS 13.0, *)
 struct WallpaperPreviewView: View {
     let wallpaper: Wallpaper
 
@@ -135,7 +133,6 @@ struct WallpaperPreviewView: View {
 }
 
 /// Screen selection dropdown
-@available(macOS 13.0, *)
 struct ScreenSelectionView: View {
     @ObservedObject private var screenManager = ScreenManager.shared
 
@@ -158,7 +155,6 @@ struct ScreenSelectionView: View {
 
 // MARK: - Button Style
 
-@available(macOS 13.0, *)
 struct MenuBarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -171,7 +167,6 @@ struct MenuBarButtonStyle: ButtonStyle {
 }
 
 /// History sheet view showing recent wallpaper entries
-@available(macOS 13.0, *)
 struct HistorySheetView: View {
     @Environment(\.dismiss) private var dismiss
     private let recentEntries = WallpaperHistory.shared.recentEntries(count: 20)

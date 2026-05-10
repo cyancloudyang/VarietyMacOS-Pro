@@ -3,7 +3,6 @@ import Foundation
 /// Wallhaven wallpaper source
 /// Fetches wallpapers from wallhaven.cc API
 /// Reference: Variety's WallhavenDownloader uses API with retry and fallback mechanisms
-@available(macOS 13.0, *)
 struct WallhavenSource: WallpaperSource {
     var sourceID: String { "wallhaven" }
     var displayName: String { "Wallhaven" }
@@ -158,7 +157,7 @@ private func createWallpaper(from data: WallhavenWallpaper) async throws -> Wall
     remoteURL: URL(string: data.path),
     thumbnailURL: URL(string: data.thumbs.large),
     title: data.category,
-    description: data.purity,
+            wallpaperDescription: data.purity,
     author: data.uploader?.username,
     sourceURL: URL(string: data.url),
     resolution: CGSize(

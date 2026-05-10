@@ -3,7 +3,6 @@ import AppKit
 import CoreImage
 
 /// Wallpaper filter effects using Core Image (GPU-accelerated)
-@available(macOS 13.0, *)
 enum WallpaperFilter: String, CaseIterable, Identifiable, Codable {
     case none = "none"
     case blur = "blur"

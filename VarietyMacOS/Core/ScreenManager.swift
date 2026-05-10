@@ -4,7 +4,6 @@ import Combine
 import UserNotifications
 
 /// Manages screen detection and configuration
-@available(macOS 13.0, *)
 final class ScreenManager: ObservableObject {
     static let shared = ScreenManager()
     
@@ -131,7 +130,6 @@ final class ScreenManager: ObservableObject {
 // MARK: - Screen Configuration
 
 /// Represents a screen configuration
-@available(macOS 13.0, *)
 struct ScreenConfiguration: Identifiable, Codable {
     let id: CGDirectDisplayID
     let resolution: CGSize
@@ -150,7 +148,6 @@ struct ScreenConfiguration: Identifiable, Codable {
 
 // MARK: - NSScreen Extensions
 
-@available(macOS 13.0, *)
 extension NSScreen: @retroactive Identifiable {
     public var id: String {
         guard let screenNumber = deviceDescription[.init("NSScreenNumber")] as? NSNumber else {

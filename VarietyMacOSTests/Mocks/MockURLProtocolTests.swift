@@ -2,7 +2,6 @@ import Testing
 import Foundation
 @testable import VarietyMacOS
 
-@available(macOS 13.0, *)
 struct MockURLProtocolTests {
 
     @Test func testMockURLProtocolRegistersAndReturnsData() async throws {

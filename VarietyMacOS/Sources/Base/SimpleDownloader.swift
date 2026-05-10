@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// Simple downloader for fetching image data from URLs
-@available(macOS 13.0, *)
 actor SimpleDownloader {
     static let shared = SimpleDownloader()
 

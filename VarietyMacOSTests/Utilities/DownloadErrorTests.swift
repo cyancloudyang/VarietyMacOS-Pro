@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for DownloadError enum
-@available(macOS 13.0, *)
 final class DownloadErrorTests: XCTestCase {
 
     // MARK: - Error Description Tests

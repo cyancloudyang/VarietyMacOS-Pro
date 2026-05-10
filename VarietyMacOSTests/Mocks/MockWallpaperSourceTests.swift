@@ -1,7 +1,6 @@
 import Testing
 @testable import VarietyMacOS
 
-@available(macOS 13.0, *)
 struct MockWallpaperSourceTests {
 
     @Test func testMockSourceReturnsConfiguredWallpapers() async throws {

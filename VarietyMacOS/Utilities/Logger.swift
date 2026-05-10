@@ -2,7 +2,6 @@ import Foundation
 import os.log
 
 /// Simple logging utility for the app
-@available(macOS 13.0, *)
 enum Logger {
     private static let osLog = OSLog(subsystem: "com.variety.app", category: "General")
     

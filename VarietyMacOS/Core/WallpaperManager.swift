@@ -4,7 +4,6 @@ import Combine
 import UserNotifications
 
 /// Main manager for wallpaper operations
-@available(macOS 13.0, *)
 final class WallpaperManager: ObservableObject {
     static let shared = WallpaperManager()
 

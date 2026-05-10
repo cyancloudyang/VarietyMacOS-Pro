@@ -2,7 +2,6 @@ import Foundation
 
 /// Bing wallpaper source
 /// Fetches the daily featured image from Bing
-@available(macOS 13.0, *)
 struct BingSource: WallpaperSource {
     var sourceID: String { "bing" }
     var displayName: String { "Bing Daily" }
@@ -94,7 +93,7 @@ struct BingSource: WallpaperSource {
             remoteURL: url,
             thumbnailURL: URL(string: baseURL + image.thumbnailUrl()),
             title: image.title,
-            description: image.copyright,
+            wallpaperDescription: image.copyright,
             author: extractAuthor(from: image.copyright),
             sourceURL: copyrightUrl,
             resolution: resolution,

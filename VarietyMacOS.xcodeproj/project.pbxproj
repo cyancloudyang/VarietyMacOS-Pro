@@ -30,7 +30,7 @@
 		1012 /* Wallpaper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2012 /* Wallpaper.swift */; };
 		1013 /* WallpaperHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2013 /* WallpaperHistory.swift */; };
 		1014 /* WallpaperFavorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2014 /* WallpaperFavorite.swift */; };
-		1015 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2015 /* Persistence.swift */; };
+		1015 /* DataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2015 /* DataContainer.swift */; };
 		1016 /* WallpaperCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2016 /* WallpaperCache.swift */; };
 		1017 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2017 /* Preferences.swift */; };
 		1018 /* SourceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2018 /* SourceConfig.swift */; };
@@ -78,7 +78,7 @@
 		2012 /* Wallpaper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallpaper.swift; sourceTree = "<group>"; };
 		2013 /* WallpaperHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperHistory.swift; sourceTree = "<group>"; };
 		2014 /* WallpaperFavorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperFavorite.swift; sourceTree = "<group>"; };
-		2015 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		2015 /* DataContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataContainer.swift; sourceTree = "<group>"; };
 		2016 /* WallpaperCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WallpaperCache.swift; sourceTree = "<group>"; };
 		2017 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		2018 /* SourceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceConfig.swift; sourceTree = "<group>"; };
@@ -219,7 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				3030 /* Models */,
-				2015 /* Persistence.swift */,
+				2015 /* DataContainer.swift */,
 				2016 /* WallpaperCache.swift */,
 				862BED1C /* ImageCacheManager.swift */,
 			);
@@ -462,7 +462,7 @@
 				1012 /* Wallpaper.swift in Sources */,
 				1013 /* WallpaperHistory.swift in Sources */,
 				1014 /* WallpaperFavorite.swift in Sources */,
-				1015 /* Persistence.swift in Sources */,
+				1015 /* DataContainer.swift in Sources */,
 				1016 /* WallpaperCache.swift in Sources */,
 				1017 /* Preferences.swift in Sources */,
 				1018 /* SourceConfig.swift in Sources */,
@@ -519,14 +519,15 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
+MACOSX_DEPLOYMENT_TARGET = 14.0;
+		MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+		ONLY_ACTIVE_ARCH = YES;
+		SDKROOT = macosx;
+		SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+		SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+		SWIFT_STRICT_CONCURRENCY = minimal;
+	};
+	name = Debug;
 		};
 		7001 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -542,38 +543,40 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-			};
-			name = Release;
+MACOSX_DEPLOYMENT_TARGET = 14.0;
+		MTL_ENABLE_DEBUG_INFO = NO;
+		SDKROOT = macosx;
+		SWIFT_COMPILATION_MODE = wholemodule;
+		SWIFT_STRICT_CONCURRENCY = minimal;
+	};
+	name = Release;
 		};
-		7002 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = VarietyMacOS/VarietyMacOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "";
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = VarietyMacOS/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_LSUIElement = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourname.variety-macos";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
+7002 /* Debug */ = {
+	isa = XCBuildConfiguration;
+	buildSettings = {
+		ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+		CODE_SIGN_ENTITLEMENTS = VarietyMacOS/VarietyMacOS.entitlements;
+		CODE_SIGN_STYLE = Automatic;
+		COMBINE_HIDPI_IMAGES = YES;
+		CURRENT_PROJECT_VERSION = 1;
+		DEVELOPMENT_ASSET_PATHS = "";
+		ENABLE_PREVIEWS = YES;
+		GENERATE_INFOPLIST_FILE = YES;
+		INFOPLIST_FILE = VarietyMacOS/Info.plist;
+		INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+		INFOPLIST_KEY_LSUIElement = YES;
+		LD_RUNPATH_SEARCH_PATHS = (
+			"$(inherited)",
+			"@executable_path/../Frameworks",
+		);
+		MARKETING_VERSION = 1.0;
+		PRODUCT_BUNDLE_IDENTIFIER = "com.cyancloud.VarietyMacOS-Pro";
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_EMIT_LOC_STRINGS = YES;
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+	};
+	name = Debug;
 		};
 		7003 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -594,28 +597,58 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yourname.variety-macos";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
+PRODUCT_BUNDLE_IDENTIFIER = "com.cyancloud.VarietyMacOS-Pro";
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_EMIT_LOC_STRINGS = YES;
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+	};
+	name = Debug;
+};
+
+7003 /* Release */ = {
+	isa = XCBuildConfiguration;
+	buildSettings = {
+		ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+		CODE_SIGN_ENTITLEMENTS = VarietyMacOS/VarietyMacOS.entitlements;
+		CODE_SIGN_STYLE = Automatic;
+		COMBINE_HIDPI_IMAGES = YES;
+		CURRENT_PROJECT_VERSION = 1;
+		DEVELOPMENT_ASSET_PATHS = "";
+		ENABLE_PREVIEWS = YES;
+		GENERATE_INFOPLIST_FILE = YES;
+		INFOPLIST_FILE = VarietyMacOS/Info.plist;
+		INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+		INFOPLIST_KEY_LSUIElement = YES;
+		LD_RUNPATH_SEARCH_PATHS = (
+			"$(inherited)",
+			"@executable_path/../Frameworks",
+		);
+		MARKETING_VERSION = 1.0;
+		PRODUCT_BUNDLE_IDENTIFIER = "com.cyancloud.VarietyMacOS-Pro";
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_EMIT_LOC_STRINGS = YES;
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+	};
+	name = Release;
 		};
-		FD670DF42FA59A25003D7A5F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cyan.VarietyMacOSTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
-			};
-			name = Debug;
+FD670DF42FA59A25003D7A5F /* Debug */ = {
+	isa = XCBuildConfiguration;
+	buildSettings = {
+		BUNDLE_LOADER = "$(TEST_HOST)";
+		CODE_SIGN_STYLE = Automatic;
+		CURRENT_PROJECT_VERSION = 1;
+		GENERATE_INFOPLIST_FILE = YES;
+		MACOSX_DEPLOYMENT_TARGET = 14.0;
+		MARKETING_VERSION = 1.0;
+		PRODUCT_BUNDLE_IDENTIFIER = cyan.VarietyMacOSTests;
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+		TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
+	};
+	name = Debug;
 		};
 		FD670DF52FA59A25003D7A5F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -624,14 +657,33 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cyan.VarietyMacOSTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
-			};
-			name = Release;
+MACOSX_DEPLOYMENT_TARGET = 14.0;
+		MARKETING_VERSION = 1.0;
+		PRODUCT_BUNDLE_IDENTIFIER = cyan.VarietyMacOSTests;
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+		TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
+	};
+	name = Debug;
+};
+
+FD670DF52FA59A25003D7A5F /* Release */ = {
+	isa = XCBuildConfiguration;
+	buildSettings = {
+		BUNDLE_LOADER = "$(TEST_HOST)";
+		CODE_SIGN_STYLE = Automatic;
+		CURRENT_PROJECT_VERSION = 1;
+		GENERATE_INFOPLIST_FILE = YES;
+		MACOSX_DEPLOYMENT_TARGET = 14.0;
+		MARKETING_VERSION = 1.0;
+		PRODUCT_BUNDLE_IDENTIFIER = cyan.VarietyMacOSTests;
+		PRODUCT_NAME = "$(TARGET_NAME)";
+		SWIFT_STRICT_CONCURRENCY = minimal;
+		SWIFT_VERSION = 5.0;
+		TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VarietyMacOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VarietyMacOS";
+	};
+	name = Release;
 		};
 /* End XCBuildConfiguration section */
 

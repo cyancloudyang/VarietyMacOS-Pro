@@ -1,7 +1,6 @@
 import Foundation
 
 /// Default downloader with caching and retry capabilities
-@available(macOS 13.0, *)
 actor DefaultDownloader {
     static let shared = DefaultDownloader()
     

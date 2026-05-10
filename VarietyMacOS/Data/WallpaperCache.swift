@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// Cache for wallpaper images
-@available(macOS 13.0, *)
 class WallpaperCache {
     static let shared = WallpaperCache()
     

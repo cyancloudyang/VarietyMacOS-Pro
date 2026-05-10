@@ -45,7 +45,6 @@ extension WallpaperSource {
 // MARK: - Wallpaper Source Types
 
 /// Enum representing different wallpaper source types
-@available(macOS 13.0, *)
 enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable {
     case unsplash = "unsplash"
     case bing = "bing"
@@ -154,7 +153,6 @@ struct SourceConfiguration: Codable {
 // MARK: - Source Priority
 
 /// Manages source selection based on weights
-@available(macOS 13.0, *)
 struct SourceSelector {
     private var configurations: [SourceConfiguration]
     

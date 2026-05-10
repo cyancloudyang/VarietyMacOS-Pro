@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for WallpaperError
-@available(macOS 13.0, *)
 final class WallpaperErrorTests: XCTestCase {
 
     // MARK: - Error Description Tests
@@ -57,7 +56,6 @@ final class WallpaperErrorTests: XCTestCase {
 }
 
 /// Tests for DisplayMode
-@available(macOS 13.0, *)
 final class DisplayModeTests: XCTestCase {
 
     // MARK: - DisplayMode Enum Tests
@@ -102,7 +100,6 @@ final class DisplayModeTests: XCTestCase {
 }
 
 /// Tests for WallpaperTimer
-@available(macOS 13.0, *)
 final class WallpaperTimerTests: XCTestCase {
 
     // MARK: - Singleton Tests

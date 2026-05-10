@@ -3,7 +3,6 @@ import AppKit
 
 /// Local folder wallpaper source
 /// Uses images from a local directory with recursive scanning and pattern matching
-@available(macOS 13.0, *)
 struct LocalSource: WallpaperSource {
     var sourceID: String { "local" }
     var displayName: String { "Local Folder" }
@@ -162,7 +161,7 @@ struct LocalSource: WallpaperSource {
             localURL: url,
             thumbnailURL: url,
             title: filename,
-            description: nil,
+            wallpaperDescription: nil,
             author: nil,
             sourceURL: nil,
             resolution: dimensions,

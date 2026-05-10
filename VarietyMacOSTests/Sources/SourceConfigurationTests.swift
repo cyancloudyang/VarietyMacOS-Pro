@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for SourceConfiguration
-@available(macOS 13.0, *)
 final class SourceConfigurationTests: XCTestCase {
 
     // MARK: - Initialization Tests
@@ -71,7 +70,6 @@ final class SourceConfigurationTests: XCTestCase {
 }
 
 /// Tests for SourceSelector
-@available(macOS 13.0, *)
 final class SourceSelectorTests: XCTestCase {
 
     // MARK: - Initialization Tests

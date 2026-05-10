@@ -3,7 +3,6 @@ import AppKit
 import CoreImage
 
 /// High-performance image cache manager with memory and disk caching
-@available(macOS 13.0, *)
 final class ImageCacheManager {
     static let shared = ImageCacheManager()
     
@@ -190,7 +189,6 @@ Logger.debug("Cleaned up old cache: \(file.lastPathComponent)")
 // MARK: - Cache Helper
 
 /// Cache helper for wallpaper images
-@available(macOS 13.0, *)
 extension Wallpaper {
     /// Get cached image key
     var cacheKey: String {

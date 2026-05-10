@@ -2,7 +2,6 @@ import Foundation
 
 // MARK: - FileManager Extensions
 
-@available(macOS 13.0, *)
 extension FileManager {
     /// Check if file exists and is readable
     func fileExistsAndIsReadable(at url: URL) -> Bool {
@@ -140,7 +139,6 @@ extension FileManager {
 
 // MARK: - URL Extensions
 
-@available(macOS 13.0, *)
 extension URL {
     /// File size
     var fileSize: UInt64? {
@@ -222,7 +220,6 @@ extension URL {
 
 // MARK: - Path Extensions
 
-@available(macOS 13.0, *)
 extension String {
     /// Expand tilde in path
     var expandingTilde: String {
@@ -249,7 +246,6 @@ extension String {
 
 // MARK: - Sandbox Security
 
-@available(macOS 13.0, *)
 enum SecurityScope {
     /// Start accessing security scoped resource
     static func access<T>(_ url: URL, block: () throws -> T) rethrows -> T {

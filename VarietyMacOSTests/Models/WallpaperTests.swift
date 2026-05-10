@@ -3,7 +3,6 @@ import XCTest
 @testable import VarietyMacOS
 
 /// Tests for Wallpaper model
-@available(macOS 13.0, *)
 final class WallpaperTests: XCTestCase {
 
     // MARK: - Initialization Tests

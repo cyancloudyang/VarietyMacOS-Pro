@@ -2,7 +2,6 @@ import Foundation
 import AppKit
 
 /// Downloads thumbnails from remote wallpaper source URLs with deduplication
-@available(macOS 13.0, *)
 public actor SourceThumbnailStrategy {
     private var activeDownloads: [String: Task<NSImage, Error>] = [:]
     private let cache = ThumbnailCache()

@@ -1,24 +1,23 @@
 import Foundation
 import Combine
+import SwiftData
 
 /// Manages wallpaper change history
-@available(macOS 13.0, *)
 final class WallpaperHistory: ObservableObject {
     static let shared = WallpaperHistory()
-    
+
     @Published var entries: [HistoryEntry] = []
     @Published var maxEntries: Int = 100
-    
-    private let persistence = Persistence.shared
-    private let historyKey = "wallpaperHistory"
-    
-    private init() {
+
+    private var modelContext: ModelContext?
+
+    func configure(with context: ModelContext) {
+        self.modelContext = context
         loadHistory()
     }
-    
+
     // MARK: - Public Methods
-    
-    /// Add a wallpaper to history
+
     func add(_ wallpaper: Wallpaper) {
         let entry = HistoryEntry(
             wallpaperId: wallpaper.id,
@@ -26,43 +25,45 @@ final class WallpaperHistory: ObservableObject {
             timestamp: Date(),
             source: wallpaper.source
         )
-        
+
+        guard let context = modelContext else { return }
+        context.insert(entry)
         entries.insert(entry, at: 0)
 
-        // Free memory: strip cachedImage from newly added entry
         wallpaper.clearCachedImage()
 
-        // Trim to max size
         if entries.count > maxEntries {
-            // Clear cached images from removed entries
             let entriesToRemove = entries[maxEntries...]
-            for entry in entriesToRemove {
-                entry.wallpaper?.clearCachedImage()
+            for entryToRemove in entriesToRemove {
+                entryToRemove.wallpaper?.clearCachedImage()
+                context.delete(entryToRemove)
             }
             entries = Array(entries.prefix(maxEntries))
         }
-        
-        saveHistory()
+
+        try? context.save()
     }
-    
-    /// Remove an entry from history
+
     func remove(_ entry: HistoryEntry) {
+        guard let context = modelContext else { return }
         entries.removeAll { $0.id == entry.id }
-        saveHistory()
+        context.delete(entry)
+        try? context.save()
     }
-    
-    /// Clear all history
+
     func clear() {
+        guard let context = modelContext else { return }
+        for entry in entries {
+            context.delete(entry)
+        }
         entries.removeAll()
-        saveHistory()
+        try? context.save()
     }
-    
-    /// Get recent entries
+
     func recentEntries(count: Int = 10) -> [HistoryEntry] {
         Array(entries.prefix(count))
     }
 
-    /// Prefetch thumbnails for recent history entries
     func prefetchThumbnails() {
         let recentWallpapers = entries.prefix(10).compactMap(\.wallpaper)
         guard !recentWallpapers.isEmpty else { return }
@@ -72,29 +73,26 @@ final class WallpaperHistory: ObservableObject {
         }
     }
 
-    /// Get entries from a specific date range
     func entries(from startDate: Date, to endDate: Date) -> [HistoryEntry] {
         entries.filter { entry in
             entry.timestamp >= startDate && entry.timestamp <= endDate
         }
     }
-    
-    /// Get entries for a specific source
+
     func entries(from source: WallpaperSourceType) -> [HistoryEntry] {
         entries.filter { $0.source == source }
     }
-    
-    /// Get statistics
+
     func statistics() -> HistoryStatistics {
         var sourceCounts: [WallpaperSourceType: Int] = [:]
-        
+
         for entry in entries {
             sourceCounts[entry.source, default: 0] += 1
         }
-        
+
         let totalDuration = entries.first?.timestamp.timeIntervalSince(entries.last?.timestamp ?? Date()) ?? 0
         let averageInterval = entries.count > 1 ? totalDuration / Double(entries.count - 1) : 0
-        
+
         return HistoryStatistics(
             totalWallpapers: entries.count,
             uniqueSources: Set(entries.map(\.source)).count,
@@ -104,68 +102,60 @@ final class WallpaperHistory: ObservableObject {
             averageInterval: averageInterval
         )
     }
-    
-    /// Search history
+
     func search(query: String) -> [HistoryEntry] {
         entries.filter { entry in
             entry.wallpaper?.displayTitle.localizedCaseInsensitiveContains(query) ?? false ||
             entry.wallpaper?.displayAuthor.localizedCaseInsensitiveContains(query) ?? false
         }
     }
-    
+
     // MARK: - Persistence
-    
+
     private func loadHistory() {
-        if let data = persistence.data(forKey: historyKey),
-           let decoded = try? JSONDecoder().decode([HistoryEntry].self, from: data) {
-            entries = decoded
+        guard let context = modelContext else { return }
+        let descriptor = FetchDescriptor<HistoryEntry>(
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        if let result = try? context.fetch(descriptor) {
+            entries = result
         }
     }
-    
-    private func saveHistory() {
-        if let data = try? JSONEncoder().encode(entries) {
-            persistence.set(data, forKey: historyKey)
-        }
+
+    /// Export history to JSON
+    func exportToJSON() -> Data? {
+        // TODO: Implement SwiftData-compatible export
+        nil
+    }
+
+    /// Import history from JSON
+    func importFromJSON(_ data: Data) throws {
+        // TODO: Implement SwiftData-compatible import
     }
 }
 
 // MARK: - History Entry
 
-struct HistoryEntry: Identifiable, Codable {
-    let id: String
-    let wallpaperId: String
-    let wallpaper: Wallpaper?
-    let timestamp: Date
-    let source: WallpaperSourceType
-    
-    init(wallpaperId: String, wallpaper: Wallpaper? = nil, timestamp: Date, source: WallpaperSourceType) {
-        self.id = UUID().uuidString
+@Model
+final class HistoryEntry {
+    var id: String
+    var wallpaperId: String
+    var wallpaper: Wallpaper?
+    var timestamp: Date
+    var source: WallpaperSourceType
+
+    init(
+        id: String = UUID().uuidString,
+        wallpaperId: String,
+        wallpaper: Wallpaper? = nil,
+        timestamp: Date,
+        source: WallpaperSourceType
+    ) {
+        self.id = id
         self.wallpaperId = wallpaperId
         self.wallpaper = wallpaper
         self.timestamp = timestamp
         self.source = source
-    }
-    
-    // Custom coding to handle Wallpaper reference
-    enum CodingKeys: String, CodingKey {
-        case id, wallpaperId, timestamp, source
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        wallpaperId = try container.decode(String.self, forKey: .wallpaperId)
-        timestamp = try container.decode(Date.self, forKey: .timestamp)
-        source = try container.decode(WallpaperSourceType.self, forKey: .source)
-        wallpaper = nil // Wallpaper is not persisted in history for simplicity
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(wallpaperId, forKey: .wallpaperId)
-        try container.encode(timestamp, forKey: .timestamp)
-        try container.encode(source, forKey: .source)
     }
 }
 
@@ -178,11 +168,11 @@ struct HistoryStatistics {
     let firstUsed: Date?
     let lastUsed: Date?
     let averageInterval: TimeInterval
-    
+
     var formattedAverageInterval: String {
         let hours = Int(averageInterval) / 3600
         let minutes = (Int(averageInterval) % 3600) / 60
-        
+
         if hours > 0 {
             return "\(hours)h \(minutes)m"
         } else if minutes > 0 {
@@ -190,21 +180,5 @@ struct HistoryStatistics {
         } else {
             return "< 1m"
         }
-    }
-}
-
-// MARK: - Export
-
-extension WallpaperHistory {
-    /// Export history to JSON
-    func exportToJSON() -> Data? {
-        try? JSONEncoder().encode(entries)
-    }
-    
-    /// Import history from JSON
-    func importFromJSON(_ data: Data) throws {
-        let imported = try JSONDecoder().decode([HistoryEntry].self, from: data)
-        entries = imported
-        saveHistory()
     }
 }
