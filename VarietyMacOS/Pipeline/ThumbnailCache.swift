@@ -1,7 +1,8 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
-public actor ThumbnailCache {
+@MainActor
+public final class ThumbnailCache {
     private let memoryCache = NSCache<NSString, NSImage>()
     private let diskCacheURL: URL
     
@@ -35,7 +36,7 @@ public actor ThumbnailCache {
         return nil
     }
     
-    public func set(key: String, image: NSImage) async throws {
+    public func set(key: String, image: NSImage) throws {
         let nsKey = key as NSString
         memoryCache.setObject(image, forKey: nsKey)
         

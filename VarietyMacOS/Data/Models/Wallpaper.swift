@@ -1,5 +1,5 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import SwiftData
 
 /// Represents a wallpaper with all its metadata
@@ -165,6 +165,7 @@ final class Wallpaper {
     }
 
     /// Load the full image
+    @MainActor
     func loadImage() async throws -> NSImage {
         // Check cache first
         if let cached = cachedImage {
@@ -175,9 +176,7 @@ final class Wallpaper {
         if let localURL = localURL,
            FileManager.default.fileExists(atPath: localURL.path),
            let image = NSImage(contentsOf: localURL) {
-            await MainActor.run {
-                self.cachedImage = image
-            }
+            self.cachedImage = image
             return image
         }
 
@@ -191,14 +190,13 @@ final class Wallpaper {
             throw WallpaperError.invalidImage
         }
 
-        await MainActor.run {
-            self.cachedImage = image
-        }
+        self.cachedImage = image
 
         return image
     }
 
     /// Load thumbnail
+    @MainActor
     func loadThumbnail() async throws -> NSImage {
         guard let thumbnailURL = thumbnailURL else {
             return try await loadImage()

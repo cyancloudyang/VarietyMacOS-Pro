@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AppKit
+@preconcurrency import AppKit
 import SwiftData
 
 @main

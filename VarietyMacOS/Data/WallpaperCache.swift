@@ -1,8 +1,9 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Cache for wallpaper images
-class WallpaperCache {
+@MainActor
+final class WallpaperCache {
     static let shared = WallpaperCache()
     
     private let cache = NSCache<NSString, NSImage>()

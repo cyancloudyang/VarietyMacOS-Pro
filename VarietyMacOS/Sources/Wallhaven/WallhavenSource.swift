@@ -2,23 +2,34 @@ import Foundation
 
 /// Wallhaven wallpaper source
 /// Fetches wallpapers from wallhaven.cc API
-/// Reference: Variety's WallhavenDownloader uses API with retry and fallback mechanisms
-struct WallhavenSource: WallpaperSource {
+struct WallhavenSource: WallpaperSource, Sendable {
     var sourceID: String { "wallhaven" }
     var displayName: String { "Wallhaven" }
 
     private let baseURL = "https://wallhaven.cc/api/v1"
     private let apiKey: String?
-    
-    // User agent to avoid being blocked by anti-crawler mechanisms
-    private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    
-    // Retry configuration
-    private let maxRetries: Int = 5
-    private let retryDelay: TimeInterval = 0.5 // seconds
+    private let searchQuery: String
+    private let wallhavenEnabled: Bool
+    private let wallhavenWeight: Double
 
-    init(apiKey: String? = nil) {
-        self.apiKey = apiKey ?? Preferences.shared.wallhavenAPIKey
+    private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+    private let maxRetries: Int = 5
+    private let retryDelay: TimeInterval = 0.5
+
+    init(apiKey: String? = nil, searchQuery: String = "") {
+        self.apiKey = apiKey
+        self.searchQuery = searchQuery
+        self.wallhavenEnabled = false
+        self.wallhavenWeight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.apiKey = Preferences.shared.wallhavenAPIKey
+        self.searchQuery = Preferences.shared.wallhavenSearchQuery
+        self.wallhavenEnabled = Preferences.shared.wallhavenEnabled
+        self.wallhavenWeight = Preferences.shared.wallhavenWeight
     }
 
     // MARK: - WallpaperSource
@@ -63,7 +74,6 @@ struct WallhavenSource: WallpaperSource {
 
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
         var wallpapers: [Wallpaper] = []
-        let searchQuery = Preferences.shared.wallhavenSearchQuery
 
         for page in 1...min(count, 5) {
             let url = buildSearchURL(query: searchQuery, page: page)
@@ -114,11 +124,11 @@ struct WallhavenSource: WallpaperSource {
     func configuration() -> SourceConfiguration {
         SourceConfiguration(
             sourceType: .wallhaven,
-            isEnabled: Preferences.shared.wallhavenEnabled,
-            weight: Preferences.shared.wallhavenWeight,
+            isEnabled: wallhavenEnabled,
+            weight: wallhavenWeight,
             customSettings: [
-                "searchQuery": Preferences.shared.wallhavenSearchQuery,
-                "apiKey": Preferences.shared.wallhavenAPIKey ?? ""
+                "searchQuery": searchQuery,
+                "apiKey": apiKey ?? ""
             ]
         )
     }

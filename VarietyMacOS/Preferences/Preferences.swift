@@ -97,6 +97,7 @@ final class AppPreferences {
 
 // MARK: - Preferences Manager
 
+@MainActor
 final class Preferences: ObservableObject {
     @Published var appPreferences: AppPreferences
 
@@ -124,6 +125,87 @@ final class Preferences: ObservableObject {
             try? context.save()
             appPreferences = prefs
         }
+    }
+
+    // MARK: - Snapshot for Actor Isolation
+
+    /// A Sendable snapshot of current preferences values.
+    /// Actors (DownloadManager, ThrottlingManager) capture this at init
+    /// to avoid cross-actor access to Preferences.shared.
+    struct Snapshot: Sendable {
+        let downloadFolder: String
+        let limitDownloadSpeed: Bool
+        let maxDownloadSpeed: Double
+        let redditSubreddits: [String]
+        let redditSort: String?
+        let redditTime: String?
+        let wallhavenAPIKey: String?
+        let wallhavenSearchQuery: String
+        let wallhavenEnabled: Bool
+        let wallhavenWeight: Double
+        let changeInterval: TimeInterval
+        let showNotifications: Bool
+        let changeAllScreens: Bool
+        let fillMode: DisplayMode
+        let enabledSources: [WallpaperSourceType]
+        let unsplashEnabled: Bool
+        let unsplashWeight: Double
+        let unsplashAccessKey: String?
+        let unsplashCollections: String?
+        let unsplashTopics: String?
+        let bingEnabled: Bool
+        let bingWeight: Double
+        let bingMarket: String?
+        let bingResolution: String?
+        let redditEnabled: Bool
+        let redditWeight: Double
+        let artstationEnabled: Bool
+        let artstationWeight: Double
+        let localEnabled: Bool
+        let localWeight: Double
+        let localFolderPath: String
+        let localRecursive: Bool
+        let localShuffle: Bool
+    }
+
+    /// Create a Sendable snapshot of all current preference values.
+    /// Call this from @MainActor context, then pass the snapshot into actors.
+    func snapshot() -> Snapshot {
+        Snapshot(
+            downloadFolder: appPreferences.downloadFolder,
+            limitDownloadSpeed: appPreferences.limitDownloadSpeed,
+            maxDownloadSpeed: appPreferences.maxDownloadSpeed,
+            redditSubreddits: appPreferences.redditSubreddits,
+            redditSort: appPreferences.redditSort,
+            redditTime: appPreferences.redditTime,
+            wallhavenAPIKey: appPreferences.wallhavenAPIKey,
+            wallhavenSearchQuery: appPreferences.wallhavenSearchQuery,
+            wallhavenEnabled: appPreferences.wallhavenEnabled,
+            wallhavenWeight: appPreferences.wallhavenWeight,
+            changeInterval: appPreferences.changeInterval,
+            showNotifications: appPreferences.showNotifications,
+            changeAllScreens: appPreferences.changeAllScreens,
+            fillMode: appPreferences.fillMode,
+            enabledSources: appPreferences.enabledSources,
+            unsplashEnabled: appPreferences.unsplashEnabled,
+            unsplashWeight: appPreferences.unsplashWeight,
+            unsplashAccessKey: appPreferences.unsplashAccessKey,
+            unsplashCollections: appPreferences.unsplashCollections,
+            unsplashTopics: appPreferences.unsplashTopics,
+            bingEnabled: appPreferences.bingEnabled,
+            bingWeight: appPreferences.bingWeight,
+            bingMarket: appPreferences.bingMarket,
+            bingResolution: appPreferences.bingResolution,
+            redditEnabled: appPreferences.redditEnabled,
+            redditWeight: appPreferences.redditWeight,
+            artstationEnabled: appPreferences.artstationEnabled,
+            artstationWeight: appPreferences.artstationWeight,
+            localEnabled: appPreferences.localEnabled,
+            localWeight: appPreferences.localWeight,
+            localFolderPath: appPreferences.localFolderPath,
+            localRecursive: appPreferences.localRecursive,
+            localShuffle: appPreferences.localShuffle
+        )
     }
 
     // MARK: - Forwarding Properties

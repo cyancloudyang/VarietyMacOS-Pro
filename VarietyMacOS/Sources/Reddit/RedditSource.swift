@@ -2,12 +2,37 @@ import Foundation
 
 /// Reddit wallpaper source
 /// Fetches images from Reddit communities
-struct RedditSource: WallpaperSource {
+struct RedditSource: WallpaperSource, Sendable {
     var sourceID: String { "reddit" }
     var displayName: String { "Reddit" }
-    
+
     private let baseURL = "https://www.reddit.com"
     private let userAgent = "VarietyWallpaperApp/1.0"
+
+    private let subreddits: [String]
+    private let sort: String
+    private let time: String
+    private let redditEnabled: Bool
+    private let redditWeight: Double
+
+    init(subreddits: [String] = ["earthporn"], sort: String = "hot", time: String = "day") {
+        self.subreddits = subreddits
+        self.sort = sort
+        self.time = time
+        self.redditEnabled = false
+        self.redditWeight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.subreddits = Preferences.shared.redditSubreddits.isEmpty
+            ? ["earthporn", "CityPorn", "spaceporn", "Art"]
+            : Preferences.shared.redditSubreddits
+        self.sort = Preferences.shared.redditSort ?? "hot"
+        self.time = Preferences.shared.redditTime ?? "day"
+        self.redditEnabled = Preferences.shared.redditEnabled
+        self.redditWeight = Preferences.shared.redditWeight
+    }
     
     // MARK: - WallpaperSource
     
@@ -20,14 +45,14 @@ struct RedditSource: WallpaperSource {
     }
     
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
-        let subreddits = Preferences.shared.redditSubreddits.isEmpty
+        let subredditsToUse = subreddits.isEmpty
             ? ["earthporn", "CityPorn", "spaceporn", "Art"]
-            : Preferences.shared.redditSubreddits
+            : subreddits
         
         var allWallpapers: [Wallpaper] = []
         
         // Shuffle subreddits for variety
-        let shuffledSubreddits = subreddits.shuffled()
+        let shuffledSubreddits = subredditsToUse.shuffled()
         
         for subreddit in shuffledSubreddits {
             if allWallpapers.count >= count { break }
@@ -52,12 +77,12 @@ struct RedditSource: WallpaperSource {
     func configuration() -> SourceConfiguration {
         SourceConfiguration(
             sourceType: .reddit,
-            isEnabled: Preferences.shared.redditEnabled,
-            weight: Preferences.shared.redditWeight,
+            isEnabled: redditEnabled,
+            weight: redditWeight,
             customSettings: [
-                "subreddits": Preferences.shared.redditSubreddits.joined(separator: ","),
-                "sort": Preferences.shared.redditSort ?? "hot",
-                "time": Preferences.shared.redditTime ?? "day"
+                "subreddits": subreddits.joined(separator: ","),
+                "sort": sort,
+                "time": time
             ]
         )
     }
@@ -65,9 +90,6 @@ struct RedditSource: WallpaperSource {
     // MARK: - Private Methods
     
     private func fetchFromSubreddit(_ subreddit: String, count: Int) async throws -> [Wallpaper] {
-        let sort = Preferences.shared.redditSort ?? "hot"
-        let time = Preferences.shared.redditTime ?? "day"
-        
         let url = buildSubredditURL(subreddit: subreddit, sort: sort, time: time)
         let response: RedditListing = try await downloadRedditJSON(from: url)
         

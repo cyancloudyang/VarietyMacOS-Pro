@@ -1,7 +1,8 @@
 import Foundation
 
 /// Manages wallpaper downloads with queuing and progress tracking
-final actor DownloadManager {
+@MainActor
+final class DownloadManager {
     static let shared = DownloadManager()
 
     private var downloadQueue: [DownloadTask] = []
@@ -9,33 +10,31 @@ final actor DownloadManager {
     private let maxConcurrentDownloads = 3
     private var downloadCompletionHandlers: [String: (Result<URL, Error>) -> Void] = [:]
 
+    private let downloadFolder: String
+    private var downloadsDirectoryCreated = false
+
     private var downloadsDirectory: URL {
-        let downloadsFolder = Preferences.shared.downloadFolder
-        if downloadsFolder.isEmpty {
+        if downloadFolder.isEmpty {
             return FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask).first!
                 .appendingPathComponent("Variety")
         }
-        return URL(fileURLWithPath: downloadsFolder)
+        return URL(fileURLWithPath: downloadFolder)
     }
 
     private init() {
-        // Create downloads directory if needed
-        Task {
-            self.createDownloadsDirectory()
-        }
+        self.downloadFolder = ""
     }
 
-    nonisolated private func createDownloadsDirectory() {
-        let downloadsFolder = Preferences.shared.downloadFolder
-        let downloadsDir: URL
-        if downloadsFolder.isEmpty {
-            downloadsDir = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask).first!
-                .appendingPathComponent("Variety")
-        } else {
-            downloadsDir = URL(fileURLWithPath: downloadsFolder)
-        }
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.downloadFolder = Preferences.shared.downloadFolder
+    }
+
+    private func ensureDownloadsDirectory() {
+        guard !downloadsDirectoryCreated else { return }
+        downloadsDirectoryCreated = true
         try? FileManager.default.createDirectory(
-            at: downloadsDir,
+            at: downloadsDirectory,
             withIntermediateDirectories: true
         )
     }
@@ -44,6 +43,7 @@ final actor DownloadManager {
     
     /// Download a wallpaper
     func download(wallpaper: Wallpaper, priority: DownloadPriority = .normal) async throws -> URL {
+        ensureDownloadsDirectory()
         let task = DownloadTask(wallpaper: wallpaper, priority: priority)
         
         // Check if already downloading
@@ -125,7 +125,7 @@ final actor DownloadManager {
             return destinationURL
             
         } catch {
-            Task { @MainActor in task.fail(error: error) }
+            task.fail(error: error)
             throw error
         }
     }
@@ -156,6 +156,7 @@ final actor DownloadManager {
 
 // MARK: - Download Task
 
+@MainActor
 final class DownloadTask {
     let id: String
     let wallpaper: Wallpaper
@@ -208,7 +209,7 @@ final class DownloadTask {
 
 // MARK: - Download Priority
 
-enum DownloadPriority: Int {
+enum DownloadPriority: Int, Sendable {
     case low = 0
     case normal = 1
     case high = 2

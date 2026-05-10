@@ -1,9 +1,10 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import Combine
 import UserNotifications
 
 /// Manages screen detection and configuration
+@MainActor
 final class ScreenManager: ObservableObject {
     static let shared = ScreenManager()
     
@@ -110,18 +111,20 @@ final class ScreenManager: ObservableObject {
     // MARK: - Observers
     
     private func setupObservers() {
-        // Observe screen configuration changes
         NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
             .sink { [weak self] _ in
-                self?.refreshScreens()
-                NotificationCenter.default.post(name: Self.screenConfigurationDidChange, object: nil)
+                Task { @MainActor [weak self] in
+                    self?.refreshScreens()
+                    NotificationCenter.default.post(name: Self.screenConfigurationDidChange, object: nil)
+                }
             }
             .store(in: &cancellables)
-        
-        // Observe workspace notifications
+
         NotificationCenter.default.publisher(for: NSWorkspace.activeSpaceDidChangeNotification)
             .sink { [weak self] _ in
-                self?.refreshScreens()
+                Task { @MainActor [weak self] in
+                    self?.refreshScreens()
+                }
             }
             .store(in: &cancellables)
     }
@@ -130,7 +133,7 @@ final class ScreenManager: ObservableObject {
 // MARK: - Screen Configuration
 
 /// Represents a screen configuration
-struct ScreenConfiguration: Identifiable, Codable {
+struct ScreenConfiguration: Identifiable, Codable, Sendable {
     let id: CGDirectDisplayID
     let resolution: CGSize
     let scaleFactor: CGFloat

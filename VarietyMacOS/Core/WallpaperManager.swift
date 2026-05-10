@@ -1,9 +1,10 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import Combine
 import UserNotifications
 
 /// Main manager for wallpaper operations
+@MainActor
 final class WallpaperManager: ObservableObject {
     static let shared = WallpaperManager()
 
@@ -60,16 +61,18 @@ private init() {
     private func setupMemoryWarningObserver() {
         let source = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
         source.setEventHandler { [weak self] in
-            guard let self else { return }
-            for wallpaper in self.wallpaperHistory where wallpaper !== self.currentWallpaper {
-                wallpaper.clearCachedImage()
-            }
-            for entry in WallpaperHistory.shared.entries {
-                if entry.wallpaper !== self.currentWallpaper {
-                    entry.wallpaper?.clearCachedImage()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                for wallpaper in self.wallpaperHistory where wallpaper !== self.currentWallpaper {
+                    wallpaper.clearCachedImage()
                 }
+                for entry in WallpaperHistory.shared.entries {
+                    if entry.wallpaper !== self.currentWallpaper {
+                        entry.wallpaper?.clearCachedImage()
+                    }
+                }
+                Logger.info("Memory warning received — cleared non-current cachedImages")
             }
-            Logger.info("Memory warning received — cleared non-current cachedImages")
         }
         source.resume()
     }
@@ -277,41 +280,28 @@ private func setWallpaper(image: NSImage) {
     private func getNextSource(excluding excludedSources: Set<String> = []) -> WallpaperSource {
         let enabledSources = Preferences.shared.enabledSources
         guard !enabledSources.isEmpty else {
-            print("📌 No enabled sources, using Bing as fallback")
-            return BingSource()
+            return BingSource(fromPreferences: true)
         }
 
-        // Filter out excluded sources (ones that already failed)
         let availableSources = enabledSources.filter { sourceType in
-            let source = sourceType.createSource()
+            let source = sourceType.createSourceFromPreferences()
             let isExcluded = excludedSources.contains(source.sourceID)
             let isAvailable = source.isAvailable()
-            if isExcluded {
-                print("🚫 Skipping \(source.displayName) - already failed this cycle")
-            }
-            if !isAvailable {
-                print("🚫 Skipping \(source.displayName) - not available")
-            }
             return !isExcluded && isAvailable
         }
 
         guard !availableSources.isEmpty else {
-            // All sources excluded or unavailable, fallback to Bing
-            print("📌 All sources excluded/unavailable, using Bing as fallback")
-            return BingSource()
+            return BingSource(fromPreferences: true)
         }
 
-        // Priority: Bing first if enabled, then random from remaining
         let sourceType: WallpaperSourceType
         if availableSources.contains(.bing) {
             sourceType = .bing
-            print("🎯 Selecting Bing (priority source)")
         } else {
             sourceType = availableSources.randomElement() ?? .bing
-            print("🎯 Selecting \(sourceType.displayName) (random from available)")
         }
 
-        return sourceType.createSource()
+        return sourceType.createSourceFromPreferences()
     }
     
     // MARK: - Timer Control
@@ -376,7 +366,7 @@ private func showNotification(for wallpaper: Wallpaper) {
 
 // MARK: - Errors
 
-enum WallpaperError: LocalizedError {
+enum WallpaperError: LocalizedError, Sendable {
     case fetchFailed(Error)
     case applyFailed(Error)
     case invalidImage

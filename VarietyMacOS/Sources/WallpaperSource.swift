@@ -1,7 +1,8 @@
 import Foundation
 
 /// Protocol defining a wallpaper source
-protocol WallpaperSource {
+@MainActor
+protocol WallpaperSource: Sendable {
     /// Unique identifier for the source
     var sourceID: String { get }
     
@@ -45,7 +46,7 @@ extension WallpaperSource {
 // MARK: - Wallpaper Source Types
 
 /// Enum representing different wallpaper source types
-enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable {
+enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable, Sendable {
     case unsplash = "unsplash"
     case bing = "bing"
     case wallhaven = "wallhaven"
@@ -109,7 +110,8 @@ enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable {
         }
     }
     
-    /// Create an instance of the source
+    /// Create an instance of the source with default settings
+    @MainActor
     func createSource() -> WallpaperSource {
         switch self {
         case .unsplash:
@@ -126,12 +128,31 @@ enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable {
             return ArtStationSource()
         }
     }
+
+    /// Create an instance of the source with current preferences
+    @MainActor
+    func createSourceFromPreferences() -> WallpaperSource {
+        switch self {
+        case .unsplash:
+            return UnsplashSource(fromPreferences: true)
+        case .bing:
+            return BingSource(fromPreferences: true)
+        case .wallhaven:
+            return WallhavenSource(fromPreferences: true)
+        case .reddit:
+            return RedditSource(fromPreferences: true)
+        case .local:
+            return LocalSource(fromPreferences: true)
+        case .artstation:
+            return ArtStationSource(fromPreferences: true)
+        }
+    }
 }
 
 // MARK: - Source Configuration
 
 /// Configuration for a wallpaper source
-struct SourceConfiguration: Codable {
+struct SourceConfiguration: Codable, Sendable {
     var sourceType: WallpaperSourceType
     var isEnabled: Bool
     var weight: Double // Probability weight for random selection
@@ -153,7 +174,7 @@ struct SourceConfiguration: Codable {
 // MARK: - Source Priority
 
 /// Manages source selection based on weights
-struct SourceSelector {
+struct SourceSelector: Sendable {
     private var configurations: [SourceConfiguration]
     
     init(configurations: [SourceConfiguration]) {
@@ -161,6 +182,7 @@ struct SourceSelector {
     }
     
     /// Select a random source based on weights
+    @MainActor
     func selectSource() -> WallpaperSource? {
         let totalWeight = configurations.reduce(0) { $0 + $1.weight }
         guard totalWeight > 0 else { return nil }

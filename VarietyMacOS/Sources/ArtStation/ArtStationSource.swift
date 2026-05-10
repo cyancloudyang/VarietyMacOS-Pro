@@ -1,21 +1,32 @@
 import Foundation
 
 /// ArtStation wallpaper source - uses RSS feed for featured artworks
-/// Reference: Variety's ArtStationDownloader uses RSS feed from artstation.com
+@MainActor
 final class ArtStationSource: WallpaperSource {
     var displayName: String { "ArtStation" }
     var sourceID: String { "artstation" }
-    
-    // User agent to avoid being blocked
+
     private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    
-    // ArtStation RSS feed for featured artwork
+
     private let rssFeedURL = URL(string: "https://www.artstation.com/featured.rss")!
-    
-    // Fallback to API if RSS fails
+
     private let apiURL = URL(string: "https://www.artstation.com/api/v2/projects/trending.json")!
-    
+
     private var fetchCount: Int = 0
+
+    private let artstationEnabled: Bool
+    private let artstationWeight: Double
+
+    init() {
+        self.artstationEnabled = false
+        self.artstationWeight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.artstationEnabled = Preferences.shared.artstationEnabled
+        self.artstationWeight = Preferences.shared.artstationWeight
+    }
 
     func fetchWallpaper() async throws -> Wallpaper {
         // Try RSS feed first (like Variety does)
@@ -198,7 +209,11 @@ final class ArtStationSource: WallpaperSource {
     }
 
     func configuration() -> SourceConfiguration {
-        SourceConfiguration(sourceType: .artstation)
+        SourceConfiguration(
+            sourceType: .artstation,
+            isEnabled: artstationEnabled,
+            weight: artstationWeight
+        )
     }
 }
 

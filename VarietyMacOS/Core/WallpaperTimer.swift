@@ -2,6 +2,7 @@ import Foundation
 import Combine
 
 /// Timer manager for automatic wallpaper changes
+@MainActor
 final class WallpaperTimer: ObservableObject {
     static let shared = WallpaperTimer()
     
@@ -9,8 +10,8 @@ final class WallpaperTimer: ObservableObject {
     @Published var timeUntilNextChange: TimeInterval = 0
     @Published var nextChangeDate: Date?
     
-    private var timer: Timer?
-    private var countdownTimer: Timer?
+    private nonisolated(unsafe) var timer: Timer?
+    private nonisolated(unsafe) var countdownTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     
     /// Callback to execute when timer fires
@@ -24,7 +25,10 @@ final class WallpaperTimer: ObservableObject {
     }
     
     deinit {
-        stop()
+        timer?.invalidate()
+        timer = nil
+        countdownTimer?.invalidate()
+        countdownTimer = nil
     }
     
     // MARK: - Timer Control
@@ -32,19 +36,23 @@ final class WallpaperTimer: ObservableObject {
     /// Start the wallpaper change timer
     func start(interval: TimeInterval? = nil) {
         stop()
-        
+
         if let newInterval = interval {
             self.interval = newInterval
         }
-        
-        // Set up the main timer
-        timer = Timer.scheduledTimer(withTimeInterval: self.interval, repeats: true) { [weak self] _ in
-            self?.fireTimer()
+
+        let currentInterval = self.interval
+
+        timer = Timer.scheduledTimer(withTimeInterval: currentInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.fireTimer()
+            }
         }
-        
-        // Set up countdown timer for UI updates
+
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.updateCountdown()
+            Task { @MainActor in
+                self?.updateCountdown()
+            }
         }
         
         isRunning = true
@@ -130,12 +138,14 @@ final class WallpaperTimer: ObservableObject {
         Preferences.shared.$appPreferences
             .dropFirst()
             .sink { [weak self] newPrefs in
-                guard let self = self else { return }
-                let newInterval = newPrefs.changeInterval
-                if self.isRunning {
-                    self.start(interval: newInterval)
-                } else {
-                    self.interval = newInterval
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+                    let newInterval = newPrefs.changeInterval
+                    if self.isRunning {
+                        self.start(interval: newInterval)
+                    } else {
+                        self.interval = newInterval
+                    }
                 }
             }
             .store(in: &cancellables)

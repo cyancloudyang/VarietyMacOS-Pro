@@ -1,5 +1,5 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Represents the source of a thumbnail image
 public enum ThumbnailSource: Sendable {

@@ -1,8 +1,8 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Display mode for wallpaper rendering
-enum DisplayMode: String, CaseIterable, Codable, Identifiable {
+enum DisplayMode: String, CaseIterable, Codable, Identifiable, Sendable {
     case fill = "fill"
     case fit = "fit"
     case stretch = "stretch"

@@ -1,7 +1,8 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// AppleScript command handler for VarietyMacOS
+@MainActor
 class VarietyScripting: NSObject {
     static let shared = VarietyScripting()
     

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Download Error
 
-enum DownloadError: LocalizedError, Equatable {
+enum DownloadError: LocalizedError, Equatable, Sendable {
 // Basic errors (from SimpleDownloader)
 case invalidResponse
 case httpError(Int)

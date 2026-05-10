@@ -1,5 +1,5 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Simple downloader for fetching image data from URLs
 actor SimpleDownloader {

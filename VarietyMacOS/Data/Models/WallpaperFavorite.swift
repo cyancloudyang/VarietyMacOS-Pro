@@ -3,6 +3,7 @@ import Combine
 import SwiftData
 
 /// Manages favorite wallpapers
+@MainActor
 final class WallpaperFavorite: ObservableObject {
     static let shared = WallpaperFavorite()
 
@@ -203,7 +204,7 @@ final class FavoriteEntry {
 
 // MARK: - Favorite Statistics
 
-struct FavoriteStatistics {
+struct FavoriteStatistics: Sendable {
     let totalFavorites: Int
     let uniqueSources: Int
     let uniqueTags: Int

@@ -2,12 +2,31 @@ import Foundation
 
 /// Bing wallpaper source
 /// Fetches the daily featured image from Bing
-struct BingSource: WallpaperSource {
+struct BingSource: WallpaperSource, Sendable {
     var sourceID: String { "bing" }
     var displayName: String { "Bing Daily" }
-    
+
+    private let market: String
+    private let resolution: String
+    private let isEnabled: Bool
+    private let weight: Double
     private let baseURL = "https://www.bing.com"
     private let apiEndpoint = "https://www.bing.com/HPImageArchive.aspx"
+
+    init(market: String = "en-US", resolution: String = "UHD") {
+        self.market = market
+        self.resolution = resolution
+        self.isEnabled = true
+        self.weight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.market = Preferences.shared.bingMarket ?? "en-US"
+        self.resolution = Preferences.shared.bingResolution ?? "UHD"
+        self.isEnabled = Preferences.shared.bingEnabled
+        self.weight = Preferences.shared.bingWeight
+    }
     
     // MARK: - WallpaperSource
     
@@ -53,11 +72,11 @@ struct BingSource: WallpaperSource {
     func configuration() -> SourceConfiguration {
         SourceConfiguration(
             sourceType: .bing,
-            isEnabled: Preferences.shared.bingEnabled,
-            weight: Preferences.shared.bingWeight,
+            isEnabled: isEnabled,
+            weight: weight,
             customSettings: [
-                "market": Preferences.shared.bingMarket ?? "en-US",
-                "resolution": Preferences.shared.bingResolution ?? "UHD"
+                "market": market,
+                "resolution": resolution
             ]
         )
     }
@@ -66,9 +85,7 @@ struct BingSource: WallpaperSource {
     
     private func buildArchiveURL(count: Int) -> URL {
         var components = URLComponents(string: apiEndpoint)!
-        let market = Preferences.shared.bingMarket ?? "en-US"
-        let resolution = Preferences.shared.bingResolution ?? "UHD"
-        
+
         components.queryItems = [
             URLQueryItem(name: "format", value: "js"),
             URLQueryItem(name: "idx", value: "0"),

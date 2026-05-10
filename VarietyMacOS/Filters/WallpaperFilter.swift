@@ -1,9 +1,9 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import CoreImage
 
 /// Wallpaper filter effects using Core Image (GPU-accelerated)
-enum WallpaperFilter: String, CaseIterable, Identifiable, Codable {
+enum WallpaperFilter: String, CaseIterable, Identifiable, Codable, Sendable {
     case none = "none"
     case blur = "blur"
     case sharpen = "sharpen"

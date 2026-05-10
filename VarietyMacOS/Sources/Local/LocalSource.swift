@@ -1,19 +1,37 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Local folder wallpaper source
 /// Uses images from a local directory with recursive scanning and pattern matching
-struct LocalSource: WallpaperSource {
+struct LocalSource: WallpaperSource, Sendable {
     var sourceID: String { "local" }
     var displayName: String { "Local Folder" }
 
-    private let fileManager = FileManager.default
+    private let folderPath: String
+    private let recursive: Bool
+    private let shuffle: Bool
+    private let isEnabled: Bool
+    private let weight: Double
+    private nonisolated(unsafe) let fileManager = FileManager.default
     private let supportedExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "webp", "heic"]
-    
-    // Pattern matching for file names
-    private var fileNamePatterns: [String] {
-        // Could be extended to support custom patterns from preferences
-        return ["*"]
+
+    private var fileNamePatterns: [String] { ["*"] }
+
+    init(folderPath: String = "", recursive: Bool = true, shuffle: Bool = true) {
+        self.folderPath = folderPath
+        self.recursive = recursive
+        self.shuffle = shuffle
+        self.isEnabled = true
+        self.weight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.folderPath = Preferences.shared.localFolderPath
+        self.recursive = Preferences.shared.localRecursive
+        self.shuffle = Preferences.shared.localShuffle
+        self.isEnabled = Preferences.shared.localEnabled
+        self.weight = Preferences.shared.localWeight
     }
     
     // MARK: - WallpaperSource
@@ -27,13 +45,12 @@ struct LocalSource: WallpaperSource {
     }
     
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
-        let folderPath = Preferences.shared.localFolderPath
         guard !folderPath.isEmpty else {
             throw WallpaperError.noImageAvailable
         }
-        
+
         let folderURL = URL(fileURLWithPath: folderPath)
-        let imageURLs = try await scanForImages(in: folderURL, recursive: Preferences.shared.localRecursive)
+        let imageURLs = try await scanForImages(in: folderURL)
         
         guard !imageURLs.isEmpty else {
             throw WallpaperError.noImageAvailable
@@ -49,30 +66,29 @@ struct LocalSource: WallpaperSource {
     }
     
     func isAvailable() -> Bool {
-        let folderPath = Preferences.shared.localFolderPath
         guard !folderPath.isEmpty else { return false }
-        
+
         var isDirectory: ObjCBool = false
         let exists = fileManager.fileExists(atPath: folderPath, isDirectory: &isDirectory)
         return exists && isDirectory.boolValue
     }
-    
+
     func configuration() -> SourceConfiguration {
         SourceConfiguration(
             sourceType: .local,
-            isEnabled: Preferences.shared.localEnabled,
-            weight: Preferences.shared.localWeight,
+            isEnabled: isEnabled,
+            weight: weight,
             customSettings: [
-                "folderPath": Preferences.shared.localFolderPath,
-                "recursive": String(Preferences.shared.localRecursive),
-                "shuffle": String(Preferences.shared.localShuffle)
+                "folderPath": folderPath,
+                "recursive": String(recursive),
+                "shuffle": String(shuffle)
             ]
         )
     }
     
     // MARK: - Private Methods
     
-    private func scanForImages(in folder: URL, recursive: Bool) async throws -> [URL] {
+    private func scanForImages(in folder: URL) async throws -> [URL] {
         var imageURLs: [URL] = []
 
         let keys: [URLResourceKey] = [.isRegularFileKey, .nameKey, .isHiddenKey]
@@ -178,45 +194,39 @@ struct LocalSource: WallpaperSource {
     }
     
     // MARK: - Public Methods
-    
-    /// Get total count of available images
+
     func getImageCount() async -> Int {
-        let folderPath = Preferences.shared.localFolderPath
         guard !folderPath.isEmpty else { return 0 }
-        
+
         let folderURL = URL(fileURLWithPath: folderPath)
-        
+
         do {
-            let urls = try await scanForImages(in: folderURL, recursive: Preferences.shared.localRecursive)
+            let urls = try await scanForImages(in: folderURL)
             return urls.count
         } catch {
             Logger.error("Failed to count images: \(error.localizedDescription)")
             return 0
         }
     }
-    
-    /// Get all available images
+
     func getAllImages() async -> [URL] {
-        let folderPath = Preferences.shared.localFolderPath
         guard !folderPath.isEmpty else { return [] }
-        
+
         let folderURL = URL(fileURLWithPath: folderPath)
-        
+
         do {
-            return try await scanForImages(in: folderURL, recursive: Preferences.shared.localRecursive)
+            return try await scanForImages(in: folderURL)
         } catch {
             Logger.error("Failed to get images: \(error.localizedDescription)")
             return []
         }
     }
-    
-    /// Add images to the local folder
+
     func addImage(_ url: URL) throws {
-        let folderPath = Preferences.shared.localFolderPath
         guard !folderPath.isEmpty else {
             throw LocalSourceError.noFolderConfigured
         }
-        
+
         let folderURL = URL(fileURLWithPath: folderPath)
         let destination = folderURL.appendingPathComponent(url.lastPathComponent)
         
@@ -231,7 +241,7 @@ struct LocalSource: WallpaperSource {
 
 // MARK: - Errors
 
-enum LocalSourceError: LocalizedError {
+enum LocalSourceError: LocalizedError, Sendable {
     case noFolderConfigured
     case invalidImageFile
     case copyFailed

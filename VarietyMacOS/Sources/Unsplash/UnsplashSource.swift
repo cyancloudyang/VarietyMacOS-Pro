@@ -2,15 +2,32 @@ import Foundation
 
 /// Unsplash wallpaper source
 /// Fetches high-quality photos from Unsplash API
-struct UnsplashSource: WallpaperSource {
+struct UnsplashSource: WallpaperSource, Sendable {
     var sourceID: String { "unsplash" }
     var displayName: String { "Unsplash" }
-    
+
     private let accessKey: String?
+    private let collections: String?
+    private let topics: String?
+    private let isEnabled: Bool
+    private let weight: Double
     private let baseURL = "https://api.unsplash.com"
-    
+
     init(accessKey: String? = nil) {
-        self.accessKey = accessKey ?? Preferences.shared.unsplashAccessKey
+        self.accessKey = accessKey
+        self.collections = nil
+        self.topics = nil
+        self.isEnabled = true
+        self.weight = 1.0
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.accessKey = Preferences.shared.unsplashAccessKey
+        self.collections = Preferences.shared.unsplashCollections
+        self.topics = Preferences.shared.unsplashTopics
+        self.isEnabled = Preferences.shared.unsplashEnabled
+        self.weight = Preferences.shared.unsplashWeight
     }
     
     // MARK: - WallpaperSource
@@ -75,12 +92,12 @@ struct UnsplashSource: WallpaperSource {
     func configuration() -> SourceConfiguration {
         SourceConfiguration(
             sourceType: .unsplash,
-            isEnabled: Preferences.shared.unsplashEnabled,
-            weight: Preferences.shared.unsplashWeight,
+            isEnabled: isEnabled,
+            weight: weight,
             customSettings: [
-                "accessKey": Preferences.shared.unsplashAccessKey ?? "",
-                "collections": Preferences.shared.unsplashCollections ?? "",
-                "topics": Preferences.shared.unsplashTopics ?? ""
+                "accessKey": accessKey ?? "",
+                "collections": collections ?? "",
+                "topics": topics ?? ""
             ]
         )
     }
@@ -92,13 +109,13 @@ struct UnsplashSource: WallpaperSource {
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "client_id", value: accessKey!)
         ]
-        
-        // Add optional parameters
-        if let collections = Preferences.shared.unsplashCollections, !collections.isEmpty {
+
+        // Add optional parameters (captured at init time)
+        if let collections = collections, !collections.isEmpty {
             queryItems.append(URLQueryItem(name: "collections", value: collections))
         }
-        
-        if let topics = Preferences.shared.unsplashTopics, !topics.isEmpty {
+
+        if let topics = topics, !topics.isEmpty {
             queryItems.append(URLQueryItem(name: "topics", value: topics))
         }
         

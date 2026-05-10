@@ -1,10 +1,11 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import CoreImage
 import ImageIO
 
 /// Generates thumbnails locally from full-size images using CGImageSource downsampling
-public actor LocalResizeStrategy {
+@MainActor
+public final class LocalResizeStrategy {
     private let targetSize: CGSize
     
     public init(targetSize: CGSize = CGSize(width: 400, height: 225)) {

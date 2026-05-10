@@ -3,19 +3,23 @@ import Foundation
 /// Manages bandwidth throttling for downloads
 actor ThrottlingManager {
     static let shared = ThrottlingManager()
-    
-    private var isThrottlingEnabled: Bool {
-        Preferences.shared.limitDownloadSpeed
-    }
-    
-    private var maxBytesPerSecond: Double {
-        Double(Preferences.shared.maxDownloadSpeed) * 1024 // Convert KB/s to bytes/s
-    }
-    
+
+    private let isThrottlingEnabled: Bool
+    private let maxBytesPerSecond: Double
+
     private var tokenBuckets: [String: TokenBucket] = [:]
-    private let defaultBucket = TokenBucket(rate: 1024 * 1024, capacity: 1024 * 1024) // 1 MB/s default
-    
-    private init() {}
+    private let defaultBucket = TokenBucket(rate: 1024 * 1024, capacity: 1024 * 1024)
+
+    private init() {
+        self.isThrottlingEnabled = false
+        self.maxBytesPerSecond = 1024 * 1024
+    }
+
+    @MainActor
+    init(fromPreferences: Bool) {
+        self.isThrottlingEnabled = Preferences.shared.limitDownloadSpeed
+        self.maxBytesPerSecond = Double(Preferences.shared.maxDownloadSpeed) * 1024
+    }
     
     // MARK: - Public Methods
     
@@ -70,15 +74,9 @@ actor ThrottlingManager {
     
     /// Update throttling settings
     func updateSettings(enabled: Bool, maxSpeedKBps: Double) async {
-        Preferences.shared.limitDownloadSpeed = enabled
-        Task { @MainActor in Preferences.shared.maxDownloadSpeed = maxSpeedKBps }
-        
-        // Update all existing buckets
-        if enabled {
-            let newRate = maxSpeedKBps * 1024
-            for (_, bucket) in tokenBuckets {
-                await bucket.updateRate(newRate)
-            }
+        let newRate = maxSpeedKBps * 1024
+        for (_, bucket) in tokenBuckets {
+            await bucket.updateRate(newRate)
         }
     }
     
@@ -185,7 +183,7 @@ extension ThrottlingManager {
 
 // MARK: - Throttling Errors
 
-enum ThrottlingError: LocalizedError {
+enum ThrottlingError: LocalizedError, Sendable {
     case downloadFailed
     case rateLimitExceeded
     

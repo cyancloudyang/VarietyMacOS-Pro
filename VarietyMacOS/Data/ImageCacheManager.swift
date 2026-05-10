@@ -1,8 +1,9 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 import CoreImage
 
 /// High-performance image cache manager with memory and disk caching
+@MainActor
 final class ImageCacheManager {
     static let shared = ImageCacheManager()
     

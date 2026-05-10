@@ -2,11 +2,11 @@ import Foundation
 import os.log
 
 /// Simple logging utility for the app
-enum Logger {
+enum Logger: Sendable {
     private static let osLog = OSLog(subsystem: "com.variety.app", category: "General")
     
     /// Log level
-    enum Level: String, CaseIterable {
+    enum Level: String, CaseIterable, Sendable {
         case debug = "DEBUG"
         case info = "INFO"
         case warning = "WARNING"
@@ -27,13 +27,13 @@ enum Logger {
     }
     
     /// Minimum log level (can be configured)
-    static var minimumLevel: Level = .debug
-    
+    nonisolated(unsafe) static var minimumLevel: Level = .debug
+
     /// Enable console logging
-    static var enableConsoleLogging: Bool = true
-    
+    nonisolated(unsafe) static var enableConsoleLogging: Bool = true
+
     /// Enable file logging
-    static var enableFileLogging: Bool = false
+    nonisolated(unsafe) static var enableFileLogging: Bool = false
     
     /// Log file URL
     static var logFileURL: URL? {

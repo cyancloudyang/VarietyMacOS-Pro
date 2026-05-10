@@ -1,8 +1,9 @@
 import Foundation
-import AppKit
+@preconcurrency import AppKit
 
 /// Downloads thumbnails from remote wallpaper source URLs with deduplication
-public actor SourceThumbnailStrategy {
+@MainActor
+public final class SourceThumbnailStrategy {
     private var activeDownloads: [String: Task<NSImage, Error>] = [:]
     private let cache = ThumbnailCache()
     
@@ -11,14 +12,14 @@ public actor SourceThumbnailStrategy {
         guard let thumbnailURL = wallpaper.thumbnailURL else {
             return nil
         }
-        
+
         let dedupKey = "\(wallpaper.id)-thumb"
-        
+
         // Check cache first
-        if let cached = await cache.get(key: dedupKey) {
+        if let cached = cache.get(key: dedupKey) {
             return ThumbnailResult(image: cached, source: .remote(thumbnailURL))
         }
-        
+
         // Check if download is already in progress
         if let existingTask = activeDownloads[dedupKey] {
             do {
@@ -29,28 +30,26 @@ public actor SourceThumbnailStrategy {
                 throw error
             }
         }
-        
+
         // Start new download
-        let task = Task<NSImage, Error> {
+        let task = Task<NSImage, Error> { @MainActor in
             defer {
-                Task { @Sendable in
-                    await self.activeDownloads.removeValue(forKey: dedupKey)
-                }
+                self.activeDownloads.removeValue(forKey: dedupKey)
             }
-            
+
             let (data, _) = try await URLSession.shared.data(from: thumbnailURL)
             guard let image = NSImage(data: data) else {
                 throw ThumbnailError.invalidImageData
             }
-            
-// Cache the result
-        try await self.cache.set(key: dedupKey, image: image)
-            
+
+            // Cache the result
+            try self.cache.set(key: dedupKey, image: image)
+
             return image
         }
-        
+
         activeDownloads[dedupKey] = task
-        
+
         do {
             let image = try await task.value
             return ThumbnailResult(image: image, source: .remote(thumbnailURL))

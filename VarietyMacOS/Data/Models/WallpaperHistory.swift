@@ -3,6 +3,7 @@ import Combine
 import SwiftData
 
 /// Manages wallpaper change history
+@MainActor
 final class WallpaperHistory: ObservableObject {
     static let shared = WallpaperHistory()
 
@@ -161,7 +162,7 @@ final class HistoryEntry {
 
 // MARK: - History Statistics
 
-struct HistoryStatistics {
+struct HistoryStatistics: Sendable {
     let totalWallpapers: Int
     let uniqueSources: Int
     let sourceDistribution: [WallpaperSourceType: Int]
