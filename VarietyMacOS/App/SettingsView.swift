@@ -4,44 +4,61 @@ import Combine
 /// Settings view for configuring wallpaper sources and preferences
 @available(macOS 13.0, *)
 struct SettingsView: View {
-    @StateObject private var preferences = Preferences.shared
-    @State private var selectedTab: SettingsTab = .general
-    
-    enum SettingsTab: String, CaseIterable {
-        case general = "General"
-        case sources = "Sources"
-        case download = "Download"
-        case about = "About"
-    }
-    
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            GeneralSettingsView()
-                .tabItem {
-                    Label("General", systemImage: "gear")
-                }
-                .tag(SettingsTab.general)
-            
-            SourcesSettingsView()
-                .tabItem {
-                    Label("Sources", systemImage: "photo.stack")
-                }
-                .tag(SettingsTab.sources)
-            
-            DownloadSettingsView()
-                .tabItem {
-                    Label("Download", systemImage: "arrow.down.circle")
-                }
-                .tag(SettingsTab.download)
-            
-            AboutSettingsView()
-                .tabItem {
-                    Label("About", systemImage: "info.circle")
-                }
-                .tag(SettingsTab.about)
+  @Environment(\.dismiss) private var dismiss
+  @StateObject private var preferences = Preferences.shared
+  @State private var selectedTab: SettingsTab = .general
+
+  enum SettingsTab: String, CaseIterable {
+    case general = "General"
+    case sources = "Sources"
+    case download = "Download"
+    case about = "About"
+  }
+
+  var body: some View {
+    VStack(spacing: 0) {
+      // Header with Done button
+      HStack {
+        Spacer()
+        Button("Done") {
+          dismiss()
         }
-        .frame(width: 500, height: 400)
+        .buttonStyle(.bordered)
+        .padding(.trailing, 8)
+        .padding(.top, 8)
+      }
+
+      TabView(selection: $selectedTab) {
+        GeneralSettingsView()
+          .tabItem {
+            Label("General", systemImage: "gear")
+          }
+          .tag(SettingsTab.general)
+
+        SourcesSettingsView()
+          .tabItem {
+            Label("Sources", systemImage: "photo.stack")
+          }
+          .tag(SettingsTab.sources)
+
+        DownloadSettingsView()
+          .tabItem {
+            Label("Download", systemImage: "arrow.down.circle")
+          }
+          .tag(SettingsTab.download)
+
+        AboutSettingsView()
+          .tabItem {
+            Label("About", systemImage: "info.circle")
+          }
+          .tag(SettingsTab.about)
+      }
+      .frame(width: 500, height: 400)
     }
+    .onExitCommand {
+      dismiss()
+    }
+  }
 }
 
 // MARK: - General Settings
@@ -123,29 +140,49 @@ struct SourcesSettingsView: View {
 /// Row for source configuration
 @available(macOS 13.0, *)
 struct SourceConfigRow: View {
-    let sourceType: WallpaperSourceType
-    @State private var isEnabled = true
-    
-    var body: some View {
-        HStack {
-            Image(systemName: sourceType.iconName)
-                .frame(width: 24)
-            
-            VStack(alignment: .leading) {
-                Text(sourceType.displayName)
-                    .font(.body)
-                Text(sourceType.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-            
-            Toggle("", isOn: $isEnabled)
-                .toggleStyle(SwitchToggleStyle())
+  let sourceType: WallpaperSourceType
+  @StateObject private var preferences = Preferences.shared
+  @State private var showingConfig = false
+  
+  var body: some View {
+    HStack {
+      Image(systemName: sourceType.iconName)
+        .frame(width: 24)
+      
+      VStack(alignment: .leading) {
+        Text(sourceType.displayName)
+          .font(.body)
+        Text(sourceType.description)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+      
+      Spacer()
+      
+      if sourceType == .wallhaven {
+        Button("Configure...") {
+          showingConfig = true
         }
-        .padding(.vertical, 4)
+        .buttonStyle(.bordered)
+      }
+      
+      Toggle("", isOn: Binding(
+        get: { preferences.isSourceEnabled(sourceType) },
+        set: { _ in
+          if preferences.isSourceEnabled(sourceType) {
+            preferences.disableSource(sourceType)
+          } else {
+            preferences.enableSource(sourceType)
+          }
+        }
+      ))
+      .toggleStyle(SwitchToggleStyle())
     }
+    .padding(.vertical, 4)
+    .sheet(isPresented: $showingConfig) {
+      WallhavenSettingsView()
+    }
+  }
 }
 
 // MARK: - Download Settings
