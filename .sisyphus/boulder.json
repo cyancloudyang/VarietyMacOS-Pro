@@ -1,12 +1,7 @@
 {
-  "active_plan": null,
-  "completed_plans": [
-    "varietymacos-p0-upgrade",
-    "p0-bugfix-supplement",
-    "round3-metadata-thumbnails",
-    "p0-upgrade-gaps"
-  ],
-  "last_plan": "p0-upgrade-gaps",
-  "completed_at": "2026-05-10T00:00:00Z",
-  "agent": "sisyphus"
+  "active_plan": "/Users/cycloudyang/VarietyMacOS-Pro/.sisyphus/plans/wave-4c-ui-ux-enhancement.md",
+  "started_at": "2026-05-11T16:53:00Z",
+  "session_ids": ["ses_1fe8f1ea6ffeY7FWhGyieiupp5"],
+  "plan_name": "wave-4c-ui-ux-enhancement",
+  "worktree_path": null
 }

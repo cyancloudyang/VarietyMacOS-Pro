@@ -20,6 +20,13 @@ struct SidebarView: View {
                 ForEach(AppNavigationView.AppSection.allCases, id: \.self) { section in
                     Label(section.rawValue, systemImage: section.iconName)
                         .tag(section as AppNavigationView.AppSection?)
+                        .onHover { hovering in
+                            if hovering {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                 }
             }
 
@@ -37,6 +44,13 @@ struct SidebarView: View {
                         .help("\(collection.wallpapers.count) wallpapers")
                     }
                     .buttonStyle(.plain)
+                    .onHover { hovering in
+                        if hovering {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
+                        }
+                    }
                 }
                 .onDelete { indices in
                     let idsToDelete = indices.map { collectionManager.collections[$0].id }
@@ -52,6 +66,13 @@ struct SidebarView: View {
                 } label: {
                     Label("New Collection", systemImage: "plus")
                         .foregroundColor(.accentColor)
+                }
+                .onHover { hovering in
+                    if hovering {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
                 }
             }
         }

@@ -104,7 +104,7 @@ struct HistoryContentView: View {
                     }
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.accentColor.opacity(0.1))
+                    .background(.ultraThinMaterial)
                     .cornerRadius(3)
                 }
 

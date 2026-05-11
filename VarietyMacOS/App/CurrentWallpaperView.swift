@@ -54,7 +54,7 @@ struct CurrentWallpaperView: View {
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.accentColor.opacity(0.1))
+                    .background(.ultraThinMaterial)
                     .cornerRadius(4)
                 }
             }
@@ -87,7 +87,7 @@ struct CurrentWallpaperView: View {
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.accentColor.opacity(0.1))
+                        .background(.ultraThinMaterial)
                         .cornerRadius(4)
 
                         if let author = wallpaper.author {
@@ -144,7 +144,7 @@ struct CurrentWallpaperView: View {
                         }
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
-                        .background(Color.accentColor.opacity(0.1))
+                        .background(.ultraThinMaterial)
                         .cornerRadius(4)
 
                         Text(wallpaper.resolutionString)
@@ -166,7 +166,7 @@ struct CurrentWallpaperView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 220)
-                .background(Color.gray.opacity(0.1))
+                .background(.ultraThinMaterial)
                 .cornerRadius(8)
             }
         }
@@ -251,7 +251,7 @@ struct CurrentWallpaperView: View {
                         .foregroundColor(.orange)
                 }
                 .padding(8)
-                .background(Color.orange.opacity(0.1))
+                .background(.ultraThinMaterial)
                 .cornerRadius(6)
             }
         }
