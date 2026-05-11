@@ -129,8 +129,10 @@ import SwiftData
 /// App-wide preferences stored as a single SwiftData record
 @Model
 final class AppPreferences {
-    // MARK: - General Settings
+    // MARK: - Onboarding
+    var hasCompletedOnboarding: Bool = false
     
+    // MARK: - General Settings
     var changeInterval: TimeInterval = 1800
     var changeOnStart: Bool = false
     var showNotifications: Bool = true
@@ -297,6 +299,12 @@ final class Preferences: ObservableObject {
     /// Get the duplicate avoidance time window
     func avoidDuplicatesWindow() -> TimeInterval {
         appPreferences.avoidDuplicatesWindow
+    }
+    
+    /// Onboarding state
+    var hasCompletedOnboarding: Bool {
+        get { appPreferences.hasCompletedOnboarding }
+        set { appPreferences.hasCompletedOnboarding = newValue }
     }
     
     // MARK: - Snapshot for Actor Isolation
