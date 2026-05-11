@@ -193,15 +193,18 @@ struct CurrentWallpaperView: View {
                         }
                     }
             }) {
-                HStack {
+                HStack(spacing: 8) {
                     if wallpaperManager.isLoading {
                         ProgressView()
-                            .scaleEffect(0.8)
+                            .scaleEffect(0.7)
+                    } else {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 16))
                     }
-                    Image(systemName: wallpaperManager.isLoading ? "arrow.clockwise" : "arrow.right.circle.fill")
                     Text(wallpaperManager.isLoading ? "Fetching..." : "Next Wallpaper")
+                        .font(.system(size: 13, weight: .medium))
                 }
-                .frame(minWidth: 120, maxWidth: 200, alignment: .center)
+                .frame(minWidth: 100, alignment: .center)
                 .contentShape(Rectangle())
                 .onHover { _ in }
             }
