@@ -31,10 +31,13 @@ struct HistoryContentView: View {
         Group {
             if entries.isEmpty {
                 emptyStateView
+                    .transition(.opacity.animation(.easeInOut(duration: 0.3)))
             } else {
                 historyList
+                    .transition(.opacity.animation(.easeInOut(duration: 0.3)))
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: entries.isEmpty)
         .navigationTitle("History")
         .searchable(text: $searchText, prompt: "Search history...")
     }
@@ -64,6 +67,7 @@ struct HistoryContentView: View {
                 Section(header: Text(section.0)) {
                     ForEach(section.1) { entry in
                         historyRow(entry: entry)
+                            .transition(.move(edge: .leading).combined(with: .opacity))
                     }
                 }
             }
@@ -117,6 +121,7 @@ struct HistoryContentView: View {
             .padding(.vertical, 4)
         }
         .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle())
     }
 
     // MARK: - Date Grouping

@@ -67,6 +67,7 @@ struct CurrentWallpaperView: View {
                     .frame(maxWidth: .infinity, maxHeight: 300)
                     .cornerRadius(8)
                     .clipped()
+                    .transition(.opacity.animation(.easeInOut(duration: 0.3)))
                     .onTapGesture {
                         selectedWallpaper = wallpaper
                     }
@@ -201,6 +202,8 @@ struct CurrentWallpaperView: View {
                         Text(wallpaperManager.isLoading ? "Fetching..." : "Next Wallpaper")
                     }
                     .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .onHover { _ in }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(wallpaperManager.isLoading)
@@ -217,7 +220,7 @@ struct CurrentWallpaperView: View {
                 .buttonStyle(.bordered)
                 .disabled(wallpaperManager.debugHistoryCount <= 1)
 
-                Button(action: {
+Button(action: {
                     wallpaperManager.toggleTimer()
                 }) {
                     Image(systemName: "pause.circle.fill")
@@ -225,6 +228,7 @@ struct CurrentWallpaperView: View {
                 }
                 .buttonStyle(.bordered)
             }
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: wallpaperManager.isLoading)
 
             HStack {
                 Circle()

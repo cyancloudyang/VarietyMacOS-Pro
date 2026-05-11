@@ -17,9 +17,14 @@ struct SourcesContentView: View {
             List {
                 ForEach(WallpaperSourceType.allCases, id: \.self) { sourceType in
                     sourceRow(for: sourceType)
+                        .transition(.asymmetric(
+                            insertion: .scale(scale: 0.95).combined(with: .opacity),
+                            removal: .opacity
+                        ))
                 }
             }
             .listStyle(.inset)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: WallpaperSourceType.allCases)
 
             Divider()
 
@@ -32,6 +37,7 @@ struct SourcesContentView: View {
                     showingAddSource = true
                 }
                 .buttonStyle(.bordered)
+                .animation(.easeInOut(duration: 0.2), value: showingAddSource)
             }
             .padding()
         }
@@ -53,11 +59,13 @@ struct SourcesContentView: View {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(preferences.isSourceEnabled(sourceType) ? Color.accentColor.opacity(0.1) : Color.gray.opacity(0.1))
                 )
+                .animation(.easeInOut(duration: 0.2), value: preferences.isSourceEnabled(sourceType))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(sourceType.displayName)
                     .font(.body)
                     .fontWeight(preferences.isSourceEnabled(sourceType) ? .semibold : .regular)
+                    .animation(.easeInOut(duration: 0.2), value: preferences.isSourceEnabled(sourceType))
                 Text(sourceType.description)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -84,7 +92,9 @@ struct SourcesContentView: View {
                 }
             ))
             .toggleStyle(.switch)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: sourceType)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
     }
 }
