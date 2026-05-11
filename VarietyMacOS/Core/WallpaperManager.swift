@@ -115,47 +115,63 @@ private init() {
         await applyWallpaper(wallpaperHistory[historyIndex])
     }
     
-  /// Fetch a new wallpaper from enabled sources with retry mechanism
-  @MainActor
-  private func fetchNewWallpaper() async {
-    guard !isLoading else {
-      print("⚠️ Already loading, skipping")
-      return
-    }
-    
-    // Clear old wallpaper cache to free memory before fetching new one
-    currentWallpaper?.clearCachedImage()
-    
-    isLoading = true
+    /// Fetch a new wallpaper from enabled sources with retry mechanism
+    @MainActor
+    private func fetchNewWallpaper() async {
+        guard !isLoading else {
+            print("⚠️ Already loading, skipping")
+            return
+        }
+        
+        // Clear old wallpaper cache to free memory before fetching new one
+        currentWallpaper?.clearCachedImage()
+        
+        isLoading = true
         error = nil
         print("🔴 isLoading set to true")
-
+        
         defer {
             isLoading = false
             print("🟢 isLoading set to false (defer)")
         }
-
+        
         // Try up to 3 times with different sources (reduced from 5)
         let maxRetries = 3
         var lastError: Error? = nil
         var attemptedSources: Set<String> = []
-
+        
         for attempt in 1...maxRetries {
             // Get next source, excluding previously failed ones
             let source = getNextSource(excluding: attemptedSources)
             let sourceKey = source.sourceID
-
+            
             print("📥 Attempt \(attempt)/\(maxRetries): Fetching from \(source.displayName)...")
-
+            
             do {
                 let wallpaper = try await source.fetchWallpaper()
                 print("✓ Fetched: \(wallpaper.title ?? "Untitled")")
-
+                
                 // Validate wallpaper has valid URL
                 guard wallpaper.remoteURL != nil || wallpaper.localURL != nil else {
                     throw NSError(domain: "WallpaperManager", code: -2, userInfo: [NSLocalizedDescriptionKey: "Invalid wallpaper - no URL"])
                 }
-
+                
+                // Check for duplicates if enabled
+                if Preferences.shared.avoidDuplicatesEnabled() {
+                    let recentHistory = WallpaperHistory.shared.entries
+                    let isDupe = DuplicateChecker.shared.isDuplicate(
+                        wallpaper,
+                        in: recentHistory,
+                        within: Preferences.shared.avoidDuplicatesWindow()
+                    )
+                    
+                    if isDupe {
+                        print("⚠️ Duplicate detected, skipping: \(wallpaper.title ?? "Untitled")")
+                        attemptedSources.insert(sourceKey)
+                        continue  // Try next source
+                    }
+                }
+                
                 wallpaperHistory.append(wallpaper)
                 historyIndex = wallpaperHistory.count - 1
                 print("🖼️ Applying to desktop...")
@@ -166,7 +182,7 @@ private init() {
                 lastError = error
                 attemptedSources.insert(sourceKey)
                 print("✗ Attempt \(attempt) failed: \(error.localizedDescription)")
-
+                
                 // Add small delay before retry to avoid rate limiting
                 if attempt < maxRetries {
                     print("🔄 Retrying with different source...")

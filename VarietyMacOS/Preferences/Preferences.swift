@@ -144,6 +144,11 @@ final class AppPreferences {
     @Relationship(deleteRule: .cascade)
     var scheduleRules: [ScheduleRule] = []
     
+    // MARK: - Duplicate Avoidance
+    
+    var avoidDuplicatesEnabled: Bool = true
+    var avoidDuplicatesWindow: TimeInterval = 3600  // 1 hour default
+    
     init() {
         // SwiftData required init for @Model with default values
     }
@@ -283,7 +288,17 @@ final class Preferences: ObservableObject {
     func getCurrentInterval() -> TimeInterval {
         appPreferences.getCurrentInterval()
     }
-
+    
+    /// Check if duplicate avoidance is enabled
+    func avoidDuplicatesEnabled() -> Bool {
+        appPreferences.avoidDuplicatesEnabled
+    }
+    
+    /// Get the duplicate avoidance time window
+    func avoidDuplicatesWindow() -> TimeInterval {
+        appPreferences.avoidDuplicatesWindow
+    }
+    
     // MARK: - Snapshot for Actor Isolation
 
     /// A Sendable snapshot of current preferences values.

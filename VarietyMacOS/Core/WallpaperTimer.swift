@@ -114,6 +114,14 @@ final class WallpaperTimer: ObservableObject {
     // MARK: - Timer Events
     
     private func fireTimer() {
+        // Check conditional pause before firing
+        if ConditionalPauseManager.shared.shouldPause() {
+            let conditions = ConditionalPauseManager.shared.getActiveConditions()
+            Logger.info("Timer fired - skipping wallpaper change due to: \(conditions.joined(separator: ", "))")
+            // Don't reset nextChangeDate - let countdown continue
+            return
+        }
+        
         Logger.info("Timer fired - changing wallpaper")
         onTimerFired?()
         nextChangeDate = Date().addingTimeInterval(interval)
