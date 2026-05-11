@@ -38,6 +38,7 @@
 		1019 /* FileManager+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019 /* FileManager+.swift */; };
 		101A /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A /* Logger.swift */; };
 		1EBF3DCB7E02C5C8CA77F4C3 /* ThumbnailPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20BF8F8767EC7AAAC0AC685 /* ThumbnailPipeline.swift */; };
+		342F5069F4143F11107FB9BE /* TagEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEF39773FB2CCB1303FA82E /* TagEditorView.swift */; };
 		46F3EF88 /* VarietyMacOSScripting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F3EF89 /* VarietyMacOSScripting.swift */; };
 		7D1113BB60A953A6F6FAF25E /* ThumbnailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692438136040414E28088389 /* ThumbnailImageView.swift */; };
 		862BED1B /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862BED1C /* ImageCacheManager.swift */; };
@@ -48,6 +49,7 @@
 		BB2FE424F366DA6CC5D14F0B /* AppNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1392C16E240E8CDE93EE720 /* AppNavigationView.swift */; };
 		BE5BFF3B070BA6485494922C /* DetailPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9823859772D90A52ECE32FB5 /* DetailPlaceholderView.swift */; };
 		D2D0911E6465D2EC57B8BC9A /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2245D2C36C7C749E474B16B /* ColorExtensions.swift */; };
+		DA30E3986F500C9BA991AFCB /* RatingStarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269163FDB523FD9F330C918A /* RatingStarsView.swift */; };
 		DF0D2F3468FE188F9D43E15C /* CurrentWallpaperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E20A7E24477DE155010864D /* CurrentWallpaperView.swift */; };
 		F1BF6E38AEFAA0379065C86B /* SourceThumbnailStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9459B1C83EF70375E7C6CB64 /* SourceThumbnailStrategy.swift */; };
 		F57A00CD /* WallpaperFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57A00CE /* WallpaperFilter.swift */; };
@@ -98,6 +100,7 @@
 		201B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		201C /* VarietyMacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VarietyMacOS.entitlements; sourceTree = "<group>"; };
 		21A13A23DEB1E5CDB3CE14C0 /* HistoryContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HistoryContentView.swift; path = VarietyMacOS/App/HistoryContentView.swift; sourceTree = SOURCE_ROOT; };
+		269163FDB523FD9F330C918A /* RatingStarsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RatingStarsView.swift; path = VarietyMacOS/App/RatingStarsView.swift; sourceTree = SOURCE_ROOT; };
 		3C6F3EF36937C38D590AED77 /* ThumbnailTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/ThumbnailTypes.swift; sourceTree = "<group>"; };
 		46F3EF89 /* VarietyMacOSScripting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VarietyMacOSScripting.swift; sourceTree = "<group>"; };
 		4F05AD4150766BB08AB0468E /* SourcesContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SourcesContentView.swift; path = VarietyMacOS/App/SourcesContentView.swift; sourceTree = SOURCE_ROOT; };
@@ -118,6 +121,7 @@
 		F8EF4955 /* ArtStationSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtStationSource.swift; sourceTree = "<group>"; };
 		FD670DE72FA3B820003D7A5F /* DownloadError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadError.swift; sourceTree = "<group>"; };
 		FD670DED2FA59A25003D7A5F /* VarietyMacOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VarietyMacOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFEF39773FB2CCB1303FA82E /* TagEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TagEditorView.swift; path = VarietyMacOS/App/TagEditorView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -204,6 +208,8 @@
 				4F05AD4150766BB08AB0468E /* SourcesContentView.swift */,
 				9823859772D90A52ECE32FB5 /* DetailPlaceholderView.swift */,
 				692438136040414E28088389 /* ThumbnailImageView.swift */,
+				269163FDB523FD9F330C918A /* RatingStarsView.swift */,
+				FFEF39773FB2CCB1303FA82E /* TagEditorView.swift */,
 			);
 			path = VarietyMacOS/App;
 			sourceTree = SOURCE_ROOT;
@@ -518,6 +524,8 @@
 				7D1113BB60A953A6F6FAF25E /* ThumbnailImageView.swift in Sources */,
 				0D50D6AAD9E6897A3651D916 /* FlowLayout.swift in Sources */,
 				D2D0911E6465D2EC57B8BC9A /* ColorExtensions.swift in Sources */,
+				DA30E3986F500C9BA991AFCB /* RatingStarsView.swift in Sources */,
+				342F5069F4143F11107FB9BE /* TagEditorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

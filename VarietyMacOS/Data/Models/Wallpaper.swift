@@ -27,6 +27,11 @@ final class Wallpaper {
     var favorites: Int?
     var fileType: String?
 
+    // User-provided rating (1-5 stars, nil = unrated)
+    var userRating: Int?
+    // User-provided custom tags (nil = use system tags only)
+    var userTags: [String]?
+
     var remoteURL: URL?
     var localURL: URL?
     var thumbnailURL: URL?
@@ -132,7 +137,9 @@ final class Wallpaper {
         colors: [String]? = nil,
         views: Int? = nil,
         favorites: Int? = nil,
-        fileType: String? = nil
+        fileType: String? = nil,
+        userRating: Int? = nil,
+        userTags: [String]? = nil
     ) {
         self.id = id
         self.source = source
@@ -155,6 +162,8 @@ final class Wallpaper {
         self.views = views
         self.favorites = favorites
         self.fileType = fileType
+        self.userRating = userRating
+        self.userTags = userTags
     }
 
     // MARK: - Methods

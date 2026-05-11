@@ -9,7 +9,7 @@ import SwiftUI
 @preconcurrency import AppKit
 
 struct DetailPlaceholderView: View {
-    let wallpaper: Wallpaper
+    @Bindable var wallpaper: Wallpaper
     @State private var loadedImage: NSImage? = nil
     @State private var isLoading = false
     @StateObject private var wallpaperFavorite = WallpaperFavorite.shared
@@ -27,8 +27,20 @@ struct DetailPlaceholderView: View {
 
                 Divider()
 
-                // Title & Author
+    // Title & Author
                 titleSection
+
+                // Rating
+                RatingStarsView(rating: wallpaper.userRating) { newRating in
+                    wallpaper.userRating = newRating
+                }
+                .padding(.vertical, 4)
+
+    TagEditorView(tags: Binding(
+        get: { wallpaper.userTags ?? [] },
+        set: { wallpaper.userTags = $0 }
+    ))
+    .padding(.vertical, 4)
 
                 // Source Badge
                 sourceBadge
@@ -41,11 +53,6 @@ struct DetailPlaceholderView: View {
                 // Color Palette
                 if !wallpaper.colorSwatchesHex.isEmpty {
                     colorPaletteSection
-                }
-
-                // Tags
-                if let tags = wallpaper.tags, !tags.isEmpty {
-                    tagsSection(tags)
                 }
 
                 // Stats
