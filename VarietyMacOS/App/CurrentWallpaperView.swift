@@ -196,14 +196,15 @@ struct CurrentWallpaperView: View {
                 HStack(spacing: 8) {
                     if wallpaperManager.isLoading {
                         ProgressView()
-                            .scaleEffect(0.7)
+                            .frame(width: 14, height: 14)
                     } else {
                         Image(systemName: "arrow.right.circle.fill")
                             .font(.system(size: 16))
                     }
                     Text(wallpaperManager.isLoading ? "Fetching..." : "Next Wallpaper")
-                        .font(.system(size: 13, weight: .medium))
+                        .lineLimit(1)
                 }
+                .frame(height: 20, alignment: .center)
                 .frame(minWidth: 100, alignment: .center)
                 .contentShape(Rectangle())
                 .onHover { _ in }
