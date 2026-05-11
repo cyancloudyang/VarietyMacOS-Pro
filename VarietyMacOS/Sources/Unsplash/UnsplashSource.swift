@@ -42,7 +42,7 @@ struct UnsplashSource: WallpaperSource, Sendable {
     
     /// Fetch wallpapers from Unsplash
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
-        // Use Picsum Photos as reliable free alternative
+        // Use Picsum Photos as reliable free alternative to deprecated source.unsplash.com
         var wallpapers: [Wallpaper] = []
         
         for _ in 0..<count {
@@ -53,16 +53,16 @@ struct UnsplashSource: WallpaperSource, Sendable {
                 remoteURL: url,
                 thumbnailURL: URL(string: "https://picsum.photos/400/225")!,
                 title: "Picsum Photo",
-                wallpaperDescription: "Random photo from Picsum",
+                wallpaperDescription: "Random photo from Picsum (via Unsplash)",
                 author: "Picsum",
                 sourceURL: url,
                 resolution: CGSize(width: 1920, height: 1080)
-        )
-        wallpapers.append(wallpaper)
+            )
+            wallpapers.append(wallpaper)
+        }
+        
+        return wallpapers
     }
-    
-    return wallpapers
-}
 
 func fetchWallpapersWithAPI(count: Int) async throws -> [Wallpaper] {
         guard let accessKey = accessKey, !accessKey.isEmpty else {
