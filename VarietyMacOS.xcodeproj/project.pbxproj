@@ -37,6 +37,7 @@
 		1018 /* SourceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2018 /* SourceConfig.swift */; };
 		1019 /* FileManager+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019 /* FileManager+.swift */; };
 		101A /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201A /* Logger.swift */; };
+		101B /* Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = 201B /* Info.plist */; };
 		1EBF3DCB7E02C5C8CA77F4C3 /* ThumbnailPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20BF8F8767EC7AAAC0AC685 /* ThumbnailPipeline.swift */; };
 		2F14C11A5179926B35CB9C43 /* WallpaperSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B163DC2682366A7B7966AA9 /* WallpaperSearchService.swift */; };
 		342F5069F4143F11107FB9BE /* TagEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEF39773FB2CCB1303FA82E /* TagEditorView.swift */; };
@@ -47,6 +48,7 @@
 		7D1113BB60A953A6F6FAF25E /* ThumbnailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692438136040414E28088389 /* ThumbnailImageView.swift */; };
 		862BED1B /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862BED1C /* ImageCacheManager.swift */; };
 		944A8AFBAE0A01AA1476D1D5 /* SourcesContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05AD4150766BB08AB0468E /* SourcesContentView.swift */; };
+		A6E87CA542D5A82AFC7D0D07 /* RotationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F88300257DA0BF611B5D8D /* RotationStrategy.swift */; };
 		AAF2339DE20DA57F2E41008C /* FavoritesContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACB2F6BB45DE473C6FFDF8A /* FavoritesContentView.swift */; };
 		AD9106D3CEF14CFEBBD83180 /* LocalResizeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05A0CD3A431AA69A5CC64C2 /* LocalResizeStrategy.swift */; };
 		B996A58DBFDF006D9E2E7A43 /* HistoryContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21A13A23DEB1E5CDB3CE14C0 /* HistoryContentView.swift */; };
@@ -115,6 +117,7 @@
 		862BED1C /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		871A0C0FE8C70ABE343C4A2C /* CollectionManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CollectionManager.swift; path = VarietyMacOS/Core/CollectionManager.swift; sourceTree = SOURCE_ROOT; };
 		8F3BA845E345CED2C7F587D9 /* SearchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SearchView.swift; path = VarietyMacOS/App/SearchView.swift; sourceTree = SOURCE_ROOT; };
+		93F88300257DA0BF611B5D8D /* RotationStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RotationStrategy.swift; path = VarietyMacOS/Sources/RotationStrategy.swift; sourceTree = "<group>"; };
 		9459B1C83EF70375E7C6CB64 /* SourceThumbnailStrategy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pipeline/SourceThumbnailStrategy.swift; sourceTree = "<group>"; };
 		9823859772D90A52ECE32FB5 /* DetailPlaceholderView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DetailPlaceholderView.swift; path = VarietyMacOS/App/DetailPlaceholderView.swift; sourceTree = SOURCE_ROOT; };
 		98E98494D9D6F2E100F92979 /* SidebarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SidebarView.swift; path = VarietyMacOS/App/SidebarView.swift; sourceTree = SOURCE_ROOT; };
@@ -171,6 +174,7 @@
 				FD670DEE2FA59A25003D7A5F /* VarietyMacOSTests */,
 				3002 /* Products */,
 				CD58D514132091753FB042FF /* WallhavenSettingsView.swift */,
+				93F88300257DA0BF611B5D8D /* RotationStrategy.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -230,6 +234,7 @@
 				2005 /* DisplayMode.swift */,
 				2006 /* ScreenManager.swift */,
 				2007 /* WallpaperTimer.swift */,
+				201B /* Info.plist */,
 				871A0C0FE8C70ABE343C4A2C /* CollectionManager.swift */,
 				7B163DC2682366A7B7966AA9 /* WallpaperSearchService.swift */,
 			);
@@ -514,6 +519,7 @@
 				1016 /* WallpaperCache.swift in Sources */,
 				1017 /* Preferences.swift in Sources */,
 				1018 /* SourceConfig.swift in Sources */,
+				101B /* Info.plist in Sources */,
 				1019 /* FileManager+.swift in Sources */,
 				101A /* Logger.swift in Sources */,
 				F8EF4954 /* ArtStationSource.swift in Sources */,
@@ -542,6 +548,7 @@
 				7638AD2DC06E3BE6B4386D58 /* CollectionManager.swift in Sources */,
 				73F5CD966F92FC3F15FCCFAF /* SearchView.swift in Sources */,
 				2F14C11A5179926B35CB9C43 /* WallpaperSearchService.swift in Sources */,
+				A6E87CA542D5A82AFC7D0D07 /* RotationStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

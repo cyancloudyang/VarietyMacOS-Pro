@@ -275,33 +275,35 @@ private func setWallpaper(image: NSImage) {
     
     // MARK: - Source Management
     
-    /// Get the next source to use based on preferences with priority-based selection
-    /// Priority: Bing first (most reliable, no API key needed), then others randomly
+    /// Get the next source using the configured rotation strategy
     private func getNextSource(excluding excludedSources: Set<String> = []) -> WallpaperSource {
         let enabledSources = Preferences.shared.enabledSources
         guard !enabledSources.isEmpty else {
             return BingSource(fromPreferences: true)
         }
-
+        
         let availableSources = enabledSources.filter { sourceType in
             let source = sourceType.createSourceFromPreferences()
             let isExcluded = excludedSources.contains(source.sourceID)
             let isAvailable = source.isAvailable()
             return !isExcluded && isAvailable
         }
-
+        
         guard !availableSources.isEmpty else {
             return BingSource(fromPreferences: true)
         }
-
-        let sourceType: WallpaperSourceType
-        if availableSources.contains(.bing) {
-            sourceType = .bing
-        } else {
-            sourceType = availableSources.randomElement() ?? .bing
-        }
-
-        return sourceType.createSourceFromPreferences()
+        
+        // Get the rotation strategy from preferences (default to weighted random)
+        let strategy = RotationStrategy.weightedRandom
+        let selector = RotationStrategyFactory.createSelector(for: strategy)
+        
+        let recentWallpapers = Array(wallpaperHistory.suffix(50))
+        let source = selector.selectSource(
+            enabledSources: availableSources,
+            recentHistory: recentWallpapers
+        )
+        
+        return source
     }
     
     // MARK: - Timer Control

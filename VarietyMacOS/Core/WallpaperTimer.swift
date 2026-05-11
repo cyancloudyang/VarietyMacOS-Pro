@@ -17,8 +17,10 @@ final class WallpaperTimer: ObservableObject {
     /// Callback to execute when timer fires
     var onTimerFired: (() -> Void)?
     
-    /// Timer interval in seconds
-    private var interval: TimeInterval = 1800 // Default 30 minutes
+    /// Timer interval in seconds (dynamic from schedule rules)
+    private var interval: TimeInterval {
+        Preferences.shared.getCurrentInterval()
+    }
     
     private init() {
         setupPreferenceObservers()
@@ -36,30 +38,24 @@ final class WallpaperTimer: ObservableObject {
     /// Start the wallpaper change timer
     func start(interval: TimeInterval? = nil) {
         stop()
-
-        if let newInterval = interval {
-            self.interval = newInterval
-        }
-
-        let currentInterval = self.interval
-
+        
+        // Use provided interval or read from preferences (which may use schedule rules)
+        let currentInterval = interval ?? Preferences.shared.getCurrentInterval()
         timer = Timer.scheduledTimer(withTimeInterval: currentInterval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.fireTimer()
             }
         }
-
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updateCountdown()
             }
         }
-        
         isRunning = true
-        nextChangeDate = Date().addingTimeInterval(self.interval)
+        nextChangeDate = Date().addingTimeInterval(currentInterval)
         updateCountdown()
         
-        Logger.info("Wallpaper timer started with interval: \(formatInterval(self.interval))")
+        Logger.info("Wallpaper timer started with interval: \(formatInterval(currentInterval))")
     }
     
     /// Stop the timer
@@ -100,9 +96,8 @@ final class WallpaperTimer: ObservableObject {
         }
     }
     
-    /// Reset the timer with a new interval
-    func reset(interval: TimeInterval) {
-        self.interval = interval
+    /// Reset the timer (re-reads interval from preferences)
+    func reset() {
         if isRunning {
             start()
         }
@@ -140,12 +135,11 @@ final class WallpaperTimer: ObservableObject {
             .sink { [weak self] newPrefs in
                 Task { @MainActor [weak self] in
                     guard let self = self else { return }
-                    let newInterval = newPrefs.changeInterval
+                    let newInterval = newPrefs.getCurrentInterval()
                     if self.isRunning {
                         self.start(interval: newInterval)
-                    } else {
-                        self.interval = newInterval
                     }
+                    // If not running, interval is automatically read from preferences on next start()
                 }
             }
             .store(in: &cancellables)
@@ -186,7 +180,7 @@ final class WallpaperTimer: ObservableObject {
 // MARK: - Notification Extensions
 
 extension WallpaperTimer {
-    /// Notification posted when wallpaper timer fires
+    /// Notification posted when timer fires
     static let timerFired = Notification.Name("WallpaperTimerFired")
     
     /// Notification posted when timer state changes

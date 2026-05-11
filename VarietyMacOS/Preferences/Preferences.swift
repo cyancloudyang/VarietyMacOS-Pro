@@ -1,4 +1,128 @@
 import Foundation
+import SwiftData
+
+/// A schedule rule for time-based wallpaper change intervals
+@Model
+final class ScheduleRule {
+    var id: String
+    var name: String
+    var startTime: Double  // Seconds from midnight (e.g., 9*3600 = 9 AM)
+    var endTime: Double
+    var daysOfWeekData: Data?  // Encoded Set<Int> for SwiftData compatibility
+    var interval: TimeInterval
+    var isEnabled: Bool
+    
+    init(
+        id: String = UUID().uuidString,
+        name: String,
+        startTime: Double,
+        endTime: Double,
+        daysOfWeek: Set<Int>,
+        interval: TimeInterval,
+        isEnabled: Bool = true
+    ) {
+        self.id = id
+        self.name = name
+        self.startTime = startTime
+        self.endTime = endTime
+        self.daysOfWeekData = try? JSONEncoder().encode(daysOfWeek)
+        self.interval = interval
+        self.isEnabled = isEnabled
+    }
+    
+    /// Computed property for days of week (1=Sunday, 7=Saturday)
+    var daysOfWeek: Set<Int> {
+        get {
+            guard let data = daysOfWeekData else { return [] }
+            return (try? JSONDecoder().decode(Set<Int>.self, from: data)) ?? []
+        }
+        set {
+            daysOfWeekData = try? JSONEncoder().encode(newValue)
+        }
+    }
+    
+    /// Check if this rule is currently active based on time and day
+    var isActive: Bool {
+        let now = Date()
+        let components = Calendar.current.dateComponents([.hour, .minute, .weekday], from: now)
+        guard let hour = components.hour, let minute = components.minute, let weekday = components.weekday else {
+            return false
+        }
+        
+        let currentTime = Double(hour) * 3600 + Double(minute) * 60
+        let currentDay = weekday
+        
+        // Check if current day is in the rule's days
+        guard daysOfWeek.contains(currentDay) else { return false }
+        
+        // Check if current time is within the rule's time range
+        if startTime < endTime {
+            return currentTime >= startTime && currentTime <= endTime
+        } else {
+            // Overnight rule (e.g., 10 PM to 6 AM)
+            return currentTime >= startTime || currentTime <= endTime
+        }
+    }
+    
+    /// Formatted time string for display
+    var formattedTimeRange: String {
+        let startHour = Int(startTime) / 3600
+        let startMinute = Int(startTime) % 3600 / 60
+        let endHour = Int(endTime) / 3600
+        let endMinute = Int(endTime) % 3600 / 60
+        
+        let startStr = String(format: "%02d:%02d", startHour, startMinute)
+        let endStr = String(format: "%02d:%02d", endHour, endMinute)
+        return "\(startStr) - \(endStr)"
+    }
+}
+
+// MARK: - Default Schedule Rules
+
+extension ScheduleRule {
+    /// Create default schedule rules for first-time users
+    static func createDefaultRules() -> [ScheduleRule] {
+        [
+            // Work Hours: Mon-Fri, 9 AM - 5 PM, 1 hour interval
+            ScheduleRule(
+                name: "Work Hours",
+                startTime: 9 * 3600,
+                endTime: 17 * 3600,
+                daysOfWeek: [2, 3, 4, 5, 6], // Mon-Fri
+                interval: 3600,
+                isEnabled: true
+            ),
+            // Evening: Mon-Fri, 5 PM - 11 PM, 30 minute interval
+            ScheduleRule(
+                name: "Evening",
+                startTime: 17 * 3600,
+                endTime: 23 * 3600,
+                daysOfWeek: [2, 3, 4, 5, 6], // Mon-Fri
+                interval: 1800,
+                isEnabled: true
+            ),
+            // Night: Daily, 11 PM - 7 AM, pause (24 hour interval)
+            ScheduleRule(
+                name: "Night (Pause)",
+                startTime: 23 * 3600,
+                endTime: 7 * 3600,
+                daysOfWeek: [1, 2, 3, 4, 5, 6, 7], // Daily
+                interval: 86400,
+                isEnabled: false
+            ),
+            // Weekend: Sat-Sun, all day, 2 hour interval
+            ScheduleRule(
+                name: "Weekend",
+                startTime: 0,
+                endTime: 24 * 3600 - 1,
+                daysOfWeek: [1, 7], // Sun, Sat
+                interval: 7200,
+                isEnabled: true
+            )
+        ]
+    }
+}
+import Foundation
 import Combine
 import SwiftData
 
@@ -6,13 +130,38 @@ import SwiftData
 @Model
 final class AppPreferences {
     // MARK: - General Settings
-
+    
     var changeInterval: TimeInterval = 1800
     var changeOnStart: Bool = false
     var showNotifications: Bool = true
     var fillMode: DisplayMode = DisplayMode.fill
     var changeAllScreens: Bool = true
-
+    
+    // MARK: - Smart Scheduling
+    
+    var smartSchedulingEnabled: Bool = false
+    
+    @Relationship(deleteRule: .cascade)
+    var scheduleRules: [ScheduleRule] = []
+    
+    init() {
+        // SwiftData required init for @Model with default values
+    }
+    
+    /// Get the currently active schedule rule
+    func getCurrentScheduleRule() -> ScheduleRule? {
+        guard smartSchedulingEnabled else { return nil }
+        return scheduleRules.first { $0.isActive && $0.isEnabled }
+    }
+    
+    /// Get the effective interval based on active schedule rule
+    func getCurrentInterval() -> TimeInterval {
+        if let rule = getCurrentScheduleRule() {
+            return rule.interval
+        }
+        return changeInterval
+    }
+    
     // MARK: - Download Settings
 
     var downloadEnabled: Bool = true
@@ -69,8 +218,6 @@ final class AppPreferences {
     @Relationship(deleteRule: .nullify)
     var lastWallpaper: Wallpaper? = nil
 
-    init() {}
-
     // MARK: - Reset
 
     func resetToDefaults() {
@@ -125,6 +272,16 @@ final class Preferences: ObservableObject {
             try? context.save()
             appPreferences = prefs
         }
+    }
+
+    /// Get the currently active schedule rule
+    func getCurrentScheduleRule() -> ScheduleRule? {
+        appPreferences.getCurrentScheduleRule()
+    }
+
+    /// Get the effective interval based on active schedule rule
+    func getCurrentInterval() -> TimeInterval {
+        appPreferences.getCurrentInterval()
     }
 
     // MARK: - Snapshot for Actor Isolation
