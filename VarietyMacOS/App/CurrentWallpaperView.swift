@@ -192,21 +192,21 @@ struct CurrentWallpaperView: View {
                             currentStatus = "Done"
                         }
                     }
-                }) {
-                    HStack {
-                        if wallpaperManager.isLoading {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                        }
-                        Image(systemName: wallpaperManager.isLoading ? "arrow.clockwise" : "arrow.right.circle.fill")
-                        Text(wallpaperManager.isLoading ? "Fetching..." : "Next Wallpaper")
+            }) {
+                HStack {
+                    if wallpaperManager.isLoading {
+                        ProgressView()
+                            .scaleEffect(0.8)
                     }
-                    .frame(maxWidth: .infinity)
-                    .contentShape(Rectangle())
-                    .onHover { _ in }
+                    Image(systemName: wallpaperManager.isLoading ? "arrow.clockwise" : "arrow.right.circle.fill")
+                    Text(wallpaperManager.isLoading ? "Fetching..." : "Next Wallpaper")
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(wallpaperManager.isLoading)
+                .frame(minWidth: 120, maxWidth: 200, alignment: .center)
+                .contentShape(Rectangle())
+                .onHover { _ in }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(wallpaperManager.isLoading)
 
                 Button(action: {
                     Task { @MainActor in

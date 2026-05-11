@@ -40,32 +40,31 @@ struct UnsplashSource: WallpaperSource, Sendable {
         return first
     }
     
+    /// Fetch wallpapers from Unsplash
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
-        // For demo purposes, using the source.unsplash API (no key required)
-        // In production, use the official API with access key
-        let url = URL(string: "https://source.unsplash.com/random/1920x1080")!
-        
+        // Use Picsum Photos as reliable free alternative
         var wallpapers: [Wallpaper] = []
         
         for _ in 0..<count {
+            let url = URL(string: "https://picsum.photos/1920/1080")!
             let wallpaper = Wallpaper(
-                id: "unsplash_\(UUID().uuidString)",
+                id: "picsum_\(UUID().uuidString)",
                 source: .unsplash,
                 remoteURL: url,
-                thumbnailURL: url,
-                title: "Unsplash Photo",
-                wallpaperDescription: "Random photo from Unsplash",
-                author: "Unsplash Photographer",
+                thumbnailURL: URL(string: "https://picsum.photos/400/225")!,
+                title: "Picsum Photo",
+                wallpaperDescription: "Random photo from Picsum",
+                author: "Picsum",
                 sourceURL: url,
                 resolution: CGSize(width: 1920, height: 1080)
-            )
-            wallpapers.append(wallpaper)
-        }
-        
-        return wallpapers
+        )
+        wallpapers.append(wallpaper)
     }
     
-    func fetchWallpapersWithAPI(count: Int) async throws -> [Wallpaper] {
+    return wallpapers
+}
+
+func fetchWallpapersWithAPI(count: Int) async throws -> [Wallpaper] {
         guard let accessKey = accessKey, !accessKey.isEmpty else {
             return try await fetchWallpapers(count: count)
         }

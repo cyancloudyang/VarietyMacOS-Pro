@@ -18,22 +18,30 @@ struct SidebarView: View {
         List {
             Section {
                 ForEach(AppNavigationView.AppSection.allCases, id: \.self) { section in
-                    Label(section.rawValue, systemImage: section.iconName)
-                        .tag(section as AppNavigationView.AppSection?)
-                        .onHover { hovering in
-                            if hovering {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
+                    Button {
+                        selectedSection = section
+                    } label: {
+                        Label(section.rawValue, systemImage: section.iconName)
+                            .foregroundColor(selectedSection == section ? .accentColor : .primary)
+                    }
+                    .tag(section as AppNavigationView.AppSection?)
+                    .buttonStyle(.plain)
+                    .onHover { hovering in
+                        if hovering {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
                         }
+                    }
                 }
             }
 
             Section("Collections") {
                 ForEach(collectionManager.collections) { collection in
                     Button {
+                        // Navigate to collection - print for now, will be handled by main view
                         print("Navigate to collection: \(collection.name)")
+                        // TODO: Implement collection navigation
                     } label: {
                         Label {
                             Text(collection.name)
@@ -60,7 +68,7 @@ struct SidebarView: View {
                         }
                     }
                 }
-
+                
                 Button {
                     isShowingNewCollectionSheet = true
                 } label: {
