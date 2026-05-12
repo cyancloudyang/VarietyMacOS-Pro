@@ -8,9 +8,20 @@
 import SwiftUI
 @preconcurrency import AppKit
 
+// MARK: - Preference Key for Scroll Offset
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct CurrentWallpaperView: View {
     @EnvironmentObject var wallpaperManager: WallpaperManager
     @Binding var selectedWallpaper: Wallpaper?
+    @State private var scrollOffset: CGFloat = 0
     @State private var currentStatus = "Ready"
     @State private var debugMode = false
     @State private var sampleWallpapers: [Wallpaper] = []
@@ -19,14 +30,28 @@ struct CurrentWallpaperView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                GeometryReader { geo in
+                    Color.clear
+                        .preference(
+                            key: ScrollOffsetPreferenceKey.self,
+                            value: geo.frame(in: .scrollView).origin.y
+                        )
+                }
+                .frame(height: 0)
+                
                 currentWallpaperSection
                 quickActionsSection
-
+                
                 if debugMode {
                     debugSection
                 }
             }
             .padding()
+        }
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                scrollOffset = offset * 0.3 // 阻尼系数
+            }
         }
         .navigationTitle("Current Wallpaper")
         .toolbar {
@@ -36,6 +61,14 @@ struct CurrentWallpaperView: View {
                 }
                 .help("Toggle debug tools")
             }
+        }
+        .background {
+            LiquidGlassBackground(
+                wallpaper: wallpaperManager.currentWallpaper,
+                intensity: 1.0,
+                scrollOffset: scrollOffset,
+                isAnimating: true
+            )
         }
     }
 
