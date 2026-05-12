@@ -91,9 +91,9 @@ struct LiquidGlassBackground: View {
     }
     
     private func extractColors(from image: NSImage) {
-        let extractor = LiquidColorExtractor.shared
-        dominantColor = extractor.extractDominantColor(from: image).swiftUIColor
-        edgeColor = extractor.extractEdgeColor(from: image).swiftUIColor
+        let extractor = LiquidColorExtractor()
+        dominantColor = Color(extractor.extractDominantColor(from: image))
+        edgeColor = Color(extractor.extractEdgeColor(from: image))
     }
 }
 

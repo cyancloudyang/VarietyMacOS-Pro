@@ -32,7 +32,7 @@ struct EdgeHaloModifier: ViewModifier {
         self.blurRadius = blurRadius
     }
     
-    func modifyContent(content: Content) -> some View {
+    func body(content: Content) -> some View {
         content
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -82,7 +82,7 @@ struct AnimatedEdgeHaloModifier: ViewModifier {
         self.animationDuration = animationDuration
     }
     
-    func modifyContent(content: Content) -> some View {
+    func body(content: Content) -> some View {
         content
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)

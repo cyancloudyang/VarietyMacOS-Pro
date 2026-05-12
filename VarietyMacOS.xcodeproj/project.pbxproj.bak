@@ -148,9 +148,9 @@
 		FFEF39773FB2CCB1303FA82E /* TagEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TagEditorView.swift; path = VarietyMacOS/App/TagEditorView.swift; sourceTree = SOURCE_ROOT; };
 
 		/* Liquid Glass Files */
-		522CC3183C4B45F79BFC6D63 /* LiquidColorExtractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidColorExtractor.swift; path = VarietyMacOS/Utilities/LiquidColorExtractor.swift; sourceTree = SOURCE_ROOT; };
-		0001DBC8FE384F9FB4B739FF /* LiquidGlassBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidGlassBackground.swift; path = VarietyMacOS/Utilities/LiquidGlassBackground.swift; sourceTree = SOURCE_ROOT; };
-		360B1C654EB245B295956C44 /* EdgeHaloModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EdgeHaloModifier.swift; path = VarietyMacOS/Utilities/EdgeHaloModifier.swift; sourceTree = SOURCE_ROOT; };
+		522CC3183C4B45F79BFC6D63 /* LiquidColorExtractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidColorExtractor.swift; path = VarietyMacOS/Utilities/LiquidColorExtractor.swift; sourceTree = "<group>"; };
+		0001DBC8FE384F9FB4B739FF /* LiquidGlassBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidGlassBackground.swift; path = VarietyMacOS/Utilities/LiquidGlassBackground.swift; sourceTree = "<group>"; };
+		360B1C654EB245B295956C44 /* EdgeHaloModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EdgeHaloModifier.swift; path = VarietyMacOS/Utilities/EdgeHaloModifier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -578,9 +578,6 @@
 				981B83438D8CD40E1C80A855 /* ConditionalPauseManager.swift in Sources */,
 				FBACC377F9387E890FB6124D /* PowerMonitor.swift in Sources */,
 				5FC0853EE1F39D4B3B8A6F12 /* AppMonitor.swift in Sources */,
-522CC3183C4B45F79BFC6D63522CC318 /* LiquidColorExtractor.swift in Sources */,
-0001DBC8FE384F9FB4B739FF0001DBC8 /* LiquidGlassBackground.swift in Sources */,
-360B1C654EB245B295956C44360B1C65 /* EdgeHaloModifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
