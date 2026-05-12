@@ -681,10 +681,42 @@ Wave 1 (SwiftData) ─── Wave 2 (Swift 6) ─── Wave 3 (NavSplit) ──
 
 ---
 
+## Visual Analysis Addendum (2026-05-12)
+
+**Analysis Method**: AI-powered image recognition via Mistral Medium 3.5  
+**Input**: VarietyMacOS Pro main window screenshot
+
+### Identified UI Issues
+
+| Issue | Severity | Location | Recommendation |
+|-------|----------|----------|----------------|
+| Button text truncation "Next Wallp..." | Medium | Quick Actions section | Use `.frame(minWidth: ...)` or automatic layout |
+| Empty state lacks guidance | Low | Current Wallpaper view | Add sample wallpaper grid or "Add first wallpaper" CTA |
+| Placeholder icon too large | Low | Empty state | Reduce icon size, add instructional text |
+
+### Recommended Actions
+
+1. **Fix button truncation** (Priority: High)
+   - File: `VarietyMacOS/App/CurrentWallpaperView.swift`
+   - Change: Add `.frame(minWidth: 100)` to "Next Wallpaper" button
+   - Alternative: Use "Next" + icon instead of full text
+
+2. **Enhance empty state** (Priority: Medium)
+   - File: `VarietyMacOS/App/CurrentWallpaperView.swift`
+   - Add: "Browse featured wallpapers" button
+   - Add: Grid of 3-6 sample wallpapers from enabled sources
+
+3. **Improve visual hierarchy** (Priority: Low)
+   - Reduce placeholder icon size by 30%
+   - Add subtle animation to "Ready" status indicator
+   - Consider showing last applied wallpaper as background preview
+
+---
+
 ## Timeline Estimate
 
 | Wave | Steps | Est. Agent Sessions |
-|------|-------|-------------------|
+|------|-------|---------------------|
 | Wave 1: SwiftData | 12 | 4-6 deep sessions |
 | Wave 2: Swift 6 | 8 | 2-3 deep sessions |
 | Wave 3: NavigationSplitView | 11 | 3-4 visual-engineering sessions |
