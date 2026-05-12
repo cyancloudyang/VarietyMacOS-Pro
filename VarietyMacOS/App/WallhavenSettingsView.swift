@@ -11,13 +11,25 @@ struct WallhavenSettingsView: View {
         TextField("Search query (e.g., nature,landscape)", text: $preferences.wallhavenSearchQuery)
         
         Picker("Sorting", selection: $preferences.wallhavenSorting) {
-          Text("Random").tag("random")
-          Text("Date Added").tag("date_added")
-          Text("Relevance").tag("relevance")
-          Text("Views").tag("views")
-          Text("Favorites").tag("favorites")
-          Text("Toplist").tag("toplist")
-        }
+                Text("Random").tag("random")
+                Text("Date Added").tag("date_added")
+                Text("Relevance").tag("relevance")
+                Text("Views").tag("views")
+                Text("Favorites").tag("favorites")
+                Text("Toplist").tag("toplist")
+            }
+
+            if preferences.wallhavenSorting == "toplist" || preferences.wallhavenSorting == "favorites" {
+                Picker("Time Range", selection: $preferences.wallhavenTopRange) {
+                    Text("Last Day").tag("1d")
+                    Text("Last 3 Days").tag("3d")
+                    Text("Last Week").tag("1w")
+                    Text("Last Month").tag("1M")
+                    Text("Last 3 Months").tag("3M")
+                    Text("Last 6 Months").tag("6M")
+                    Text("Last Year").tag("1y")
+                }
+            }
       }
       
       Section("Categories") {

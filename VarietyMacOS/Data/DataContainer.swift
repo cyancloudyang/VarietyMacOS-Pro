@@ -10,6 +10,7 @@ enum DataContainer {
         AppPreferences.self,
         SourceConfig.self,
         ScheduleRule.self,
+        WallpaperCollection.self,
     ])
 
     static let modelContainer: ModelContainer = {

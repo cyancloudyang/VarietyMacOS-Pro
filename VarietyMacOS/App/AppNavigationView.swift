@@ -70,6 +70,7 @@ struct AppNavigationView: View {
             WallpaperFavorite.shared.configure(with: modelContext)
             Preferences.shared.configure(with: modelContext)
             SourceConfigManager.shared.configure(with: modelContext)
+            CollectionManager.shared.setContext(modelContext)
             DataContainer.ensureDefaults(in: modelContext)
         }
     }

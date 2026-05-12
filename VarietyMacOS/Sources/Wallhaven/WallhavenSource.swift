@@ -11,6 +11,12 @@ struct WallhavenSource: WallpaperSource, Sendable {
     private let searchQuery: String
     private let wallhavenEnabled: Bool
     private let wallhavenWeight: Double
+    private let sorting: String
+    private let topRange: String
+    private let categories: String
+    private let purity: String
+    private let atleastResolution: String
+    private let ratio: String
 
     private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
@@ -22,6 +28,12 @@ struct WallhavenSource: WallpaperSource, Sendable {
         self.searchQuery = searchQuery
         self.wallhavenEnabled = false
         self.wallhavenWeight = 1.0
+        self.sorting = "random"
+        self.topRange = "1M"
+        self.categories = "111"
+        self.purity = "100"
+        self.atleastResolution = "1920x1080"
+        self.ratio = ""
     }
 
     @MainActor
@@ -30,6 +42,12 @@ struct WallhavenSource: WallpaperSource, Sendable {
         self.searchQuery = Preferences.shared.wallhavenSearchQuery
         self.wallhavenEnabled = Preferences.shared.wallhavenEnabled
         self.wallhavenWeight = Preferences.shared.wallhavenWeight
+        self.sorting = Preferences.shared.wallhavenSorting
+        self.topRange = Preferences.shared.wallhavenTopRange
+        self.categories = Preferences.shared.wallhavenCategories
+        self.purity = Preferences.shared.wallhavenPurity
+        self.atleastResolution = Preferences.shared.wallhavenResolution.isEmpty ? "1920x1080" : Preferences.shared.wallhavenResolution
+        self.ratio = Preferences.shared.wallhavenRatio
     }
 
     // MARK: - WallpaperSource
@@ -137,16 +155,25 @@ struct WallhavenSource: WallpaperSource, Sendable {
     
     private func buildSearchURL(query: String, page: Int) -> URL {
         var components = URLComponents(string: "\(baseURL)/search")!
-        
-        // Generate a random seed for each request to ensure different results
+
         let randomSeed = Int.random(in: 1..<1000000)
-        
+
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "page", value: String(page)),
-            URLQueryItem(name: "sorting", value: "random"),
-            URLQueryItem(name: "atleast", value: "1920x1080"),
+            URLQueryItem(name: "sorting", value: sorting),
+            URLQueryItem(name: "categories", value: categories),
+            URLQueryItem(name: "purity", value: purity),
+            URLQueryItem(name: "atleast", value: atleastResolution),
             URLQueryItem(name: "seed", value: "\(randomSeed)")
         ]
+
+        if (sorting == "toplist" || sorting == "favorites") && !topRange.isEmpty {
+            queryItems.append(URLQueryItem(name: "topRange", value: topRange))
+        }
+
+        if !ratio.isEmpty {
+            queryItems.append(URLQueryItem(name: "ratios", value: ratio))
+        }
 
         if !query.isEmpty {
             queryItems.append(URLQueryItem(name: "q", value: query))

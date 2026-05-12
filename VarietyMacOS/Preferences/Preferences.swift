@@ -200,6 +200,7 @@ final class AppPreferences {
     var wallhavenCategories: String = "111"
     var wallhavenPurity: String = "100"
     var wallhavenSorting: String = "random"
+    var wallhavenTopRange: String = "1M"
     var wallhavenResolution: String = ""
     var wallhavenRatio: String = ""
 
@@ -323,6 +324,8 @@ final class Preferences: ObservableObject {
         let wallhavenSearchQuery: String
         let wallhavenEnabled: Bool
         let wallhavenWeight: Double
+        let wallhavenSorting: String
+        let wallhavenTopRange: String
         let changeInterval: TimeInterval
         let showNotifications: Bool
         let changeAllScreens: Bool
@@ -362,6 +365,8 @@ final class Preferences: ObservableObject {
             wallhavenSearchQuery: appPreferences.wallhavenSearchQuery,
             wallhavenEnabled: appPreferences.wallhavenEnabled,
             wallhavenWeight: appPreferences.wallhavenWeight,
+            wallhavenSorting: appPreferences.wallhavenSorting,
+            wallhavenTopRange: appPreferences.wallhavenTopRange,
             changeInterval: appPreferences.changeInterval,
             showNotifications: appPreferences.showNotifications,
             changeAllScreens: appPreferences.changeAllScreens,
@@ -511,6 +516,10 @@ final class Preferences: ObservableObject {
     var wallhavenSorting: String {
         get { appPreferences.wallhavenSorting }
         set { appPreferences.wallhavenSorting = newValue }
+    }
+    var wallhavenTopRange: String {
+        get { appPreferences.wallhavenTopRange }
+        set { appPreferences.wallhavenTopRange = newValue }
     }
     var wallhavenResolution: String {
         get { appPreferences.wallhavenResolution }
