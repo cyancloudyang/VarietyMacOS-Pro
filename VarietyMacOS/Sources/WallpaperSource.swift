@@ -60,7 +60,7 @@ enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable, Sendable 
     var displayName: String {
         switch self {
         case .unsplash:
-            return "Unsplash"
+            return "Picsum Photos"
         case .bing:
             return "Bing Daily"
         case .wallhaven:
@@ -78,7 +78,7 @@ enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable, Sendable 
     var iconName: String {
         switch self {
         case .unsplash:
-            return "camera.fill"
+            return "photo.artframe"
         case .bing:
             return "globe"
         case .wallhaven:
@@ -96,7 +96,7 @@ enum WallpaperSourceType: String, CaseIterable, Codable, Identifiable, Sendable 
     var description: String {
         switch self {
         case .unsplash:
-            return "High-quality photos from Unsplash"
+            return "Random high-quality photos via Picsum"
         case .bing:
             return "Bing's daily featured image"
         case .wallhaven:

@@ -4,7 +4,7 @@ import Foundation
 /// Fetches high-quality photos from Unsplash API
 struct UnsplashSource: WallpaperSource, Sendable {
     var sourceID: String { "unsplash" }
-    var displayName: String { "Unsplash" }
+    var displayName: String { "Picsum Photos" }
 
     private let accessKey: String?
     private let collections: String?
@@ -46,18 +46,18 @@ struct UnsplashSource: WallpaperSource, Sendable {
         var wallpapers: [Wallpaper] = []
         
         for _ in 0..<count {
-            let url = URL(string: "https://picsum.photos/1920/1080")!
-            let wallpaper = Wallpaper(
-                id: "picsum_\(UUID().uuidString)",
-                source: .unsplash,
-                remoteURL: url,
-                thumbnailURL: URL(string: "https://picsum.photos/400/225")!,
-                title: "Picsum Photo",
-                wallpaperDescription: "Random photo from Picsum (via Unsplash)",
-                author: "Picsum",
-                sourceURL: url,
-                resolution: CGSize(width: 1920, height: 1080)
-            )
+        let url = URL(string: "https://picsum.photos/1920/1080")!
+        let wallpaper = Wallpaper(
+            id: "picsum_\(UUID().uuidString)",
+            source: .unsplash,
+            remoteURL: url,
+            thumbnailURL: URL(string: "https://picsum.photos/400/225")!,
+            title: "Picsum Photo",
+            wallpaperDescription: "Random photo from Picsum Photos",
+            author: "Picsum",
+            sourceURL: url,
+            resolution: CGSize(width: 1920, height: 1080)
+        )
             wallpapers.append(wallpaper)
         }
         

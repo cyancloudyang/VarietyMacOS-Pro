@@ -11,16 +11,17 @@ import SwiftUI
 struct SourcesContentView: View {
     @StateObject private var preferences = Preferences.shared
     @State private var showingAddSource = false
+    @State private var showingWallhavenConfig = false
 
     var body: some View {
         VStack(spacing: 0) {
             List {
                 ForEach(WallpaperSourceType.allCases, id: \.self) { sourceType in
                     sourceRow(for: sourceType)
-                        .transition(.asymmetric(
-                            insertion: .scale(scale: 0.95).combined(with: .opacity),
-                            removal: .opacity
-                        ))
+                    .transition(.asymmetric(
+                        insertion: .scale(scale: 0.95).combined(with: .opacity),
+                        removal: .opacity
+                    ))
                 }
             }
             .listStyle(.inset)
@@ -44,6 +45,9 @@ struct SourcesContentView: View {
         .navigationTitle("Sources")
         .sheet(isPresented: $showingAddSource) {
             AddSourceView()
+        }
+        .sheet(isPresented: $showingWallhavenConfig) {
+            WallhavenSettingsView()
         }
     }
 
@@ -75,7 +79,7 @@ struct SourcesContentView: View {
 
             if sourceType == .wallhaven {
                 Button("Configure...") {
-                    showingAddSource = true
+                    showingWallhavenConfig = true
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)

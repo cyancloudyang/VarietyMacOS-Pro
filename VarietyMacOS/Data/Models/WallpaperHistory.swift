@@ -31,10 +31,13 @@ final class WallpaperHistory: ObservableObject {
         context.insert(entry)
         entries.insert(entry, at: 0)
 
-        wallpaper.clearCachedImage()
+        // Do NOT clear cachedImage on the current wallpaper here;
+        // it is needed for display in CurrentWallpaperView.
+        // Memory cleanup is handled by WallpaperManager's memory pressure observer.
 
         if entries.count > maxEntries {
-            let entriesToRemove = entries[maxEntries...]
+            let overflow = entries.count - maxEntries
+            let entriesToRemove = Array(entries.suffix(overflow))
             for entryToRemove in entriesToRemove {
                 entryToRemove.wallpaper?.clearCachedImage()
                 context.delete(entryToRemove)

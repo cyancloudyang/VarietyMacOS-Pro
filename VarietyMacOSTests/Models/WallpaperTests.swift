@@ -237,7 +237,7 @@ final class WallpaperTests: XCTestCase {
     }
 
     func testWallpaperSourceDisplayName() {
-        XCTAssertEqual(WallpaperSourceType.unsplash.displayName, "Unsplash")
+        XCTAssertEqual(WallpaperSourceType.unsplash.displayName, "Picsum Photos")
         XCTAssertEqual(WallpaperSourceType.bing.displayName, "Bing Daily")
         XCTAssertEqual(WallpaperSourceType.wallhaven.displayName, "Wallhaven")
         XCTAssertEqual(WallpaperSourceType.reddit.displayName, "Reddit")
@@ -245,7 +245,7 @@ final class WallpaperTests: XCTestCase {
     }
 
     func testWallpaperSourceIconName() {
-        XCTAssertEqual(WallpaperSourceType.unsplash.iconName, "camera.fill")
+        XCTAssertEqual(WallpaperSourceType.unsplash.iconName, "photo.artframe")
         XCTAssertEqual(WallpaperSourceType.bing.iconName, "globe")
         XCTAssertEqual(WallpaperSourceType.wallhaven.iconName, "photo.fill")
         XCTAssertEqual(WallpaperSourceType.reddit.iconName, "bubble.left.fill")
