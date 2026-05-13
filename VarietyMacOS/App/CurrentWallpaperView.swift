@@ -62,14 +62,6 @@ struct CurrentWallpaperView: View {
                 .help("Toggle debug tools")
             }
         }
-        .background {
-            LiquidGlassBackground(
-                wallpaper: wallpaperManager.currentWallpaper,
-                intensity: 1.0,
-                scrollOffset: scrollOffset,
-                isAnimating: true
-            )
-        }
     }
 
     // MARK: - Current Wallpaper Section
