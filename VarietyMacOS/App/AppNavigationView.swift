@@ -39,37 +39,38 @@ struct AppNavigationView: View {
 
 var body: some View {
   ZStack {
-    LiquidGlassBackground(
-      wallpaper: selectedWallpaper ?? wallpaperManager.currentWallpaper,
-      intensity: 1.0,
-      scrollOffset: 0,
-      isAnimating: true
-    )
-    
     NavigationSplitView {
       SidebarView(selectedSection: $selectedSection)
+        .background(Color.clear)
     } content: {
       switch selectedSection {
       case .current:
         CurrentWallpaperView(selectedWallpaper: $selectedWallpaper)
+          .background(Color.clear)
       case .favorites:
         FavoritesContentView(selectedWallpaper: $selectedWallpaper)
+          .background(Color.clear)
       case .history:
         HistoryContentView(selectedWallpaper: $selectedWallpaper)
+          .background(Color.clear)
       case .sources:
         SourcesContentView()
+          .background(Color.clear)
       case .none:
         Text("Select a section")
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .foregroundColor(.secondary)
+          .background(Color.clear)
       }
     } detail: {
       if let wallpaper = selectedWallpaper {
         DetailPlaceholderView(wallpaper: wallpaper)
+          .background(Color.clear)
       } else {
         Text("Select a wallpaper to view details")
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .foregroundColor(.secondary)
+          .background(Color.clear)
       }
     }
     .onAppear {
@@ -80,6 +81,14 @@ var body: some View {
       CollectionManager.shared.setContext(modelContext)
       DataContainer.ensureDefaults(in: modelContext)
     }
+
+    AmbilightEffect(
+      wallpaper: selectedWallpaper ?? wallpaperManager.currentWallpaper,
+      intensity: 1.0
+    )
+    .allowsHitTesting(false)
+    .ignoresSafeArea()
+    .blendMode(.screen)
   }
 }
 }

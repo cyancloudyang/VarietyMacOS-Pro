@@ -70,6 +70,7 @@
 		/* Liquid Glass Build Files */
 		522CC3183C4B45F79BFC6D63522CC318 /* LiquidColorExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522CC3183C4B45F79BFC6D63 /* LiquidColorExtractor.swift */; };
 		0001DBC8FE384F9FB4B739FF0001DBC8 /* LiquidGlassBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0001DBC8FE384F9FB4B739FF /* LiquidGlassBackground.swift */; };
+		1FF0B68631B54ACFA78DB78D /* AmbilightEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E47E5160EF24EEA8F0F0C74 /* AmbilightEffect.swift */; };
 		360B1C654EB245B295956C44360B1C65 /* EdgeHaloModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360B1C654EB245B295956C44 /* EdgeHaloModifier.swift */; };
 /* End PBXBuildFile section */
 
@@ -150,6 +151,7 @@
 		/* Liquid Glass Files */
 		522CC3183C4B45F79BFC6D63 /* LiquidColorExtractor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidColorExtractor.swift; path = VarietyMacOS/Utilities/LiquidColorExtractor.swift; sourceTree = SOURCE_ROOT; };
 		0001DBC8FE384F9FB4B739FF /* LiquidGlassBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiquidGlassBackground.swift; path = VarietyMacOS/Utilities/LiquidGlassBackground.swift; sourceTree = SOURCE_ROOT; };
+		3E47E5160EF24EEA8F0F0C74 /* AmbilightEffect.swift */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = AmbilightEffect.swift; sourceTree = "<group>"; };
 		360B1C654EB245B295956C44 /* EdgeHaloModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EdgeHaloModifier.swift; path = VarietyMacOS/Utilities/EdgeHaloModifier.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -318,6 +320,7 @@
 			
 522CC3183C4B45F79BFC6D63 /* LiquidColorExtractor.swift */,
 0001DBC8FE384F9FB4B739FF /* LiquidGlassBackground.swift */,
+				3E47E5160EF24EEA8F0F0C74 /* AmbilightEffect.swift */,
 360B1C654EB245B295956C44 /* EdgeHaloModifier.swift */,);
 			path = VarietyMacOS/Utilities;
 			sourceTree = SOURCE_ROOT;
@@ -580,6 +583,7 @@
 				5FC0853EE1F39D4B3B8A6F12 /* AppMonitor.swift in Sources */,
 522CC3183C4B45F79BFC6D63522CC318 /* LiquidColorExtractor.swift in Sources */,
 0001DBC8FE384F9FB4B739FF0001DBC8 /* LiquidGlassBackground.swift in Sources */,
+				1FF0B68631B54ACFA78DB78D /* AmbilightEffect.swift in Sources */,
 360B1C654EB245B295956C44360B1C65 /* EdgeHaloModifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
