@@ -39,10 +39,36 @@ import CoreImage
         return .windowBackgroundColor // Simplified
     }
     
-    /// Extract edge color from image
-    func extractEdgeColor(from image: NSImage) -> NSColor {
-        return extractDominantColor(from: image)
-    }
+/// Extract edge color by sampling right vertical strip of the image
+func extractEdgeColor(from image: NSImage) -> NSColor {
+  guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+    return .windowBackgroundColor
+  }
+  
+  let ciImage = CIImage(cgImage: cgImage)
+  let width = ciImage.extent.width
+  let height = ciImage.extent.height
+  
+  let edgeRect = CGRect(x: width * 0.9, y: 0, width: width * 0.1, height: height)
+  
+  guard let filter = CIFilter(name: "CIAreaAverage") else {
+    return .windowBackgroundColor
+  }
+  filter.setValue(ciImage, forKey: kCIInputImageKey)
+  filter.setValue(edgeRect, forKey: kCIInputExtentKey)
+  
+  guard let output = filter.outputImage else {
+    return .windowBackgroundColor
+  }
+  
+  let context = CIContext(options: nil)
+  guard let cgImage = context.createCGImage(output, from: output.extent) else {
+    return .windowBackgroundColor
+  }
+  
+  let edgeImage = NSImage(cgImage: cgImage, size: NSSize(width: 1, height: 1))
+  return extractDominantColor(from: edgeImage)
+}
 }
 
 // MARK: - NSColor Extension for Liquid Glass

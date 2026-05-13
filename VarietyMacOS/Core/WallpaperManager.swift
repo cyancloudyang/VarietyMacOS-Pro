@@ -8,13 +8,14 @@ import UserNotifications
 final class WallpaperManager: ObservableObject {
     static let shared = WallpaperManager()
 
-    // MARK: - Published Properties
+// MARK: - Published Properties
 
-    @Published var currentWallpaper: Wallpaper?
-    @Published var isLoading = false
-    @Published var currentSource: WallpaperSourceType = .unsplash
-    @Published var error: WallpaperError?
-    @Published var downloadProgress: Double = 0.0  // New: download progress
+@Published var currentWallpaper: Wallpaper?
+@Published var isLoading = false
+@Published var currentSource: WallpaperSourceType = .unsplash
+@Published var error: WallpaperError?
+@Published var downloadProgress: Double = 0.0
+@Published var coldStartStatus: String = "Initializing"
 
     // Debug property for UI
     var debugHistoryCount: Int {
@@ -44,6 +45,10 @@ private init() {
 private func retryDesktopWallpaperLoad() async {
   guard currentWallpaper == nil else { return }
   
+  coldStartStatus = "Retry: waiting for screen..."
+  try? await Task.sleep(nanoseconds: 500_000_000)
+  
+  coldStartStatus = "Retry: checking screens..."
   if let screen = NSScreen.main ?? NSScreen.screens.first,
      let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen) {
     let desktopWallpaper = Wallpaper(
@@ -53,7 +58,11 @@ private func retryDesktopWallpaperLoad() async {
       resolution: screen.frame.size
     )
     currentWallpaper = desktopWallpaper
+    coldStartStatus = "Retry success: \(desktopURL.lastPathComponent)"
     print("✅ Retry loaded desktop wallpaper: \(desktopURL.lastPathComponent)")
+  } else {
+    coldStartStatus = "Retry failed: no screen/desktopURL"
+    print("⚠️ Retry failed: screen=\(NSScreen.main != nil ? "main" : "nil"), desktopURL=missing")
   }
 }
     
@@ -375,7 +384,9 @@ private func setWallpaper(image: NSImage) {
 // MARK: - Persistence
 
 private func loadLastWallpaper() {
+  coldStartStatus = "Checking screens..."
   let screen = NSScreen.main ?? NSScreen.screens.first
+  
   if screen != nil, let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen!) {
     let desktopWallpaper = Wallpaper(
       source: .local,
@@ -384,12 +395,19 @@ private func loadLastWallpaper() {
       resolution: screen!.frame.size
     )
     currentWallpaper = desktopWallpaper
+    coldStartStatus = "Loaded desktop: \(desktopURL.lastPathComponent)"
     print("✅ Loaded current desktop wallpaper: \(desktopURL.lastPathComponent)")
   } else if let lastWallpaper = Preferences.shared.lastWallpaper {
     currentWallpaper = lastWallpaper
+    coldStartStatus = "Loaded from history: \(lastWallpaper.title ?? "Unknown")"
     print("📋 Loaded app's last wallpaper: \(lastWallpaper.title ?? "Unknown")")
   } else {
-    print("⚠️ No desktop wallpaper detected and no app history - will load on first fetch")
+    coldStartStatus = "No wallpaper - screen=\(screen == nil ? "nil" : "ok"), desktopURL=missing, history=missing"
+    print("⚠️ No desktop wallpaper detected and no app history")
+    print("   Screen available: \(screen != nil ? "yes" : "no")")
+    if screen == nil {
+      print("   Note: NSScreen.main and NSScreen.screens.first are both nil during early launch")
+    }
   }
 }
     

@@ -99,35 +99,42 @@ struct LiquidGlassBackground: View {
 
 // MARK: - Liquid Layer
 
-/// Base liquid layer with flowing animation
+/// Base liquid layer with radial radiation from right edge
 struct LiquidLayer: View {
-    let color: Color
-    let intensity: CGFloat
-    let scrollOffset: CGFloat
-    let isAnimating: Bool
-    let animationDuration: Double
-    
-    @State private var animationOffset: CGFloat = 0
-    
-    var body: some View {
-        ZStack {
-            // Base color layer
-            color
-                .opacity(0.3 * intensity)
-            
-            // Flowing gradient overlay
-            if isAnimating {
-                FlowingGradient(offset: animationOffset, scrollOffset: scrollOffset)
-                    .opacity(0.5 * intensity)
-            }
-        }
-        .animation(.linear(duration: animationDuration).repeatForever(autoreverses: true), value: isAnimating)
-        .onAppear {
-            if isAnimating {
-                animationOffset = 1
-            }
-        }
+  let color: Color
+  let intensity: CGFloat
+  let scrollOffset: CGFloat
+  let isAnimating: Bool
+  let animationDuration: Double
+  
+  @State private var animationOffset: CGFloat = 0
+  
+  var body: some View {
+    ZStack {
+      RadialGradient(
+        colors: [
+          color.opacity(0.4 * intensity),
+          color.opacity(0.2 * intensity),
+          color.opacity(0.1 * intensity),
+          color.opacity(0.05 * intensity)
+        ],
+        center: .trailing,
+        startRadius: 100,
+        endRadius: 600
+      )
+      
+      if isAnimating {
+        FlowingGradient(offset: animationOffset, scrollOffset: scrollOffset)
+          .opacity(0.3 * intensity)
+      }
     }
+    .animation(.linear(duration: animationDuration).repeatForever(autoreverses: true), value: isAnimating)
+    .onAppear {
+      if isAnimating {
+        animationOffset = 1
+      }
+    }
+  }
 }
 
 /// Flowing gradient animation
