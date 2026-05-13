@@ -86,101 +86,28 @@ struct CurrentWallpaperView: View {
                 }
             }
 
-        if let wallpaper = wallpaperManager.currentWallpaper,
-           let image = wallpaper.cachedImage {
+        if let wallpaper = wallpaperManager.currentWallpaper, let image = wallpaper.cachedImage {
+          ZStack {
+            // Liquid Glass background effect - halo radiates from the image
+            LiquidGlassBackground(
+              wallpaper: wallpaper,
+              intensity: 1.0,
+              scrollOffset: scrollOffset,
+              isAnimating: true
+            )
+            
+            // Wallpaper image on top
             Image(nsImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: 300)
-                .cornerRadius(8)
-                .clipped()
-                .transition(.opacity.animation(.easeInOut(duration: 0.3)))
-                .onTapGesture {
-                    selectedWallpaper = wallpaper
-                }
-
-            ViewThatFits(in: .horizontal) {
-                // Full metadata view
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(wallpaper.title ?? "Unknown")
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .lineLimit(2)
-
-                    HStack {
-                        Image(systemName: wallpaper.source.iconName)
-                            .font(.caption2)
-                        Text(wallpaper.source.displayName)
-                            .font(.caption2)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(4)
-
-                    if let author = wallpaper.author {
-                        Text("by \(author)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    if let colors = wallpaper.colors, !colors.isEmpty {
-                        HStack(spacing: 4) {
-                            ForEach(Array(colors.prefix(6)), id: \.self) { hex in
-                                Circle()
-                                    .fill(hexColor(hex: hex))
-                                    .frame(width: 16, height: 16)
-                            }
-                            if colors.count > 6 {
-                                Text("+\(colors.count - 6)")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .padding(.top, 2)
-                    }
-
-                    HStack(spacing: 12) {
-                        Text(wallpaper.resolutionString)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        if let views = wallpaper.views {
-                            Text("\(NumberFormatter().string(from: NSNumber(value: views)) ?? "\(views)") views")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                        if let favorites = wallpaper.favorites {
-                            Text("\u{2764}\u{FE0F} \(NumberFormatter().string(from: NSNumber(value: favorites)) ?? "\(favorites)")")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-
-                // Compact metadata view
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(wallpaper.title ?? "Unknown")
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .lineLimit(1)
-
-                    HStack {
-                        Image(systemName: wallpaper.source.iconName)
-                            .font(.caption2)
-                        Text(wallpaper.source.displayName)
-                            .font(.caption2)
-                    }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(4)
-
-                    Text(wallpaper.resolutionString)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.top, 8)
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+              .frame(maxWidth: .infinity, maxHeight: 300)
+              .cornerRadius(8)
+              .clipped()
+              .transition(.opacity.animation(.easeInOut(duration: 0.3)))
+          }
+          .onTapGesture {
+            selectedWallpaper = wallpaper
+          }
         } else if let wallpaper = wallpaperManager.currentWallpaper {
             VStack(spacing: 12) {
                 ProgressView()
