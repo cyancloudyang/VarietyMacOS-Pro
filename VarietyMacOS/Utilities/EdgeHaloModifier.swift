@@ -46,7 +46,7 @@ struct EdgeHaloModifier: ViewModifier {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: lineWidth
+                        lineWidth: lineWidth * 1.5
                     )
                     .blur(radius: blurRadius)
             )
@@ -96,7 +96,7 @@ struct AnimatedEdgeHaloModifier: ViewModifier {
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: lineWidth
+                        lineWidth: lineWidth * 1.5
                     )
                     .blur(radius: blurRadius)
             )
@@ -132,7 +132,7 @@ extension View {
             color: color,
             intensity: intensity,
             cornerRadius: cornerRadius,
-            lineWidth: lineWidth,
+            lineWidth: lineWidth * 1.5,
             blurRadius: blurRadius
         ))
     }
@@ -157,7 +157,7 @@ extension View {
             color: color,
             intensity: intensity,
             cornerRadius: cornerRadius,
-            lineWidth: lineWidth,
+            lineWidth: lineWidth * 1.5,
             blurRadius: blurRadius,
             animationDuration: animationDuration
         ))

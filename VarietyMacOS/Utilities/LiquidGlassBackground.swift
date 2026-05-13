@@ -183,20 +183,38 @@ struct EdgeHaloLayer: View {
     let intensity: CGFloat
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .stroke(
-                LinearGradient(
-                    colors: [
-                        color.opacity(0.3 * intensity),
-                        color.opacity(0.1 * intensity),
-                        .clear
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ),
-                lineWidth: 2
-            )
-            .blur(radius: 10 * intensity)
+        ZStack {
+                // Top-left corner glow
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                color.opacity(0.6 * intensity),
+                                color.opacity(0.3 * intensity),
+                                .clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .center
+                        ),
+                        lineWidth: 3
+                    )
+                    .blur(radius: 12 * intensity)
+                
+                // Bottom-right corner glow (subtle)
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                color.opacity(0.3 * intensity),
+                                .clear
+                            ],
+                            startPoint: .bottomTrailing,
+                            endPoint: .center
+                        ),
+                        lineWidth: 2
+                    )
+                    .blur(radius: 8 * intensity)
+            }
     }
 }
 
