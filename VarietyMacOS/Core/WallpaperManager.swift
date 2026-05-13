@@ -57,6 +57,10 @@ private func retryDesktopWallpaperLoad() async {
       title: desktopURL.deletingPathExtension().lastPathComponent,
       resolution: screen.frame.size
     )
+    if let localPath = desktopURL.path.removingPercentEncoding,
+       let image = NSImage(contentsOf: URL(fileURLWithPath: localPath)) {
+      desktopWallpaper.cachedImage = image
+    }
     currentWallpaper = desktopWallpaper
     coldStartStatus = "Retry success: \(desktopURL.lastPathComponent)"
     print("✅ Retry loaded desktop wallpaper: \(desktopURL.lastPathComponent)")
@@ -394,6 +398,12 @@ private func loadLastWallpaper() {
       title: desktopURL.deletingPathExtension().lastPathComponent,
       resolution: screen!.frame.size
     )
+    // Try to load the image immediately
+    if let localPath = desktopURL.path.removingPercentEncoding,
+       let image = NSImage(contentsOf: URL(fileURLWithPath: localPath)) {
+      desktopWallpaper.cachedImage = image
+      print("✅ Pre-loaded desktop wallpaper image: \(image.size)")
+    }
     currentWallpaper = desktopWallpaper
     coldStartStatus = "Loaded desktop: \(desktopURL.lastPathComponent)"
     print("✅ Loaded current desktop wallpaper: \(desktopURL.lastPathComponent)")
@@ -405,12 +415,9 @@ private func loadLastWallpaper() {
     coldStartStatus = "No wallpaper - screen=\(screen == nil ? "nil" : "ok"), desktopURL=missing, history=missing"
     print("⚠️ No desktop wallpaper detected and no app history")
     print("   Screen available: \(screen != nil ? "yes" : "no")")
-    if screen == nil {
-      print("   Note: NSScreen.main and NSScreen.screens.first are both nil during early launch")
-    }
   }
 }
-    
+
 private func showNotification(for wallpaper: Wallpaper) {
         let notification = UNMutableNotificationContent()
         notification.title = "Wallpaper Changed"
