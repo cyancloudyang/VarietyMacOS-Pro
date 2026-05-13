@@ -80,6 +80,14 @@ var body: some View {
       SourceConfigManager.shared.configure(with: modelContext)
       CollectionManager.shared.setContext(modelContext)
       DataContainer.ensureDefaults(in: modelContext)
+      if selectedWallpaper == nil {
+        selectedWallpaper = wallpaperManager.currentWallpaper
+      }
+    }
+    .onChange(of: wallpaperManager.currentWallpaper) { _, newWallpaper in
+      if selectedWallpaper == nil {
+        selectedWallpaper = newWallpaper
+      }
     }
 
     AmbilightEffect(
