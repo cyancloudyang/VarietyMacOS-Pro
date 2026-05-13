@@ -43,7 +43,23 @@ private init() {
 }
 
 private func retryDesktopWallpaperLoad() async {
-  guard currentWallpaper == nil else { return }
+  guard currentWallpaper == nil else {
+    if let wallpaper = currentWallpaper, wallpaper.cachedImage == nil {
+      coldStartStatus = "Retry: loading image..."
+      if let localURL = wallpaper.localURL,
+         FileManager.default.fileExists(atPath: localURL.path),
+         let image = NSImage(contentsOf: localURL) {
+        wallpaper.cachedImage = image
+        coldStartStatus = "Retry success: image loaded"
+        print("✅ Retry loaded wallpaper image: \(image.size)")
+        objectWillChange.send()
+      } else {
+        coldStartStatus = "Retry failed: image load failed"
+        print("⚠️ Retry failed to load image")
+      }
+    }
+    return
+  }
   
   coldStartStatus = "Retry: waiting for screen..."
   try? await Task.sleep(nanoseconds: 500_000_000)
@@ -408,9 +424,16 @@ private func loadLastWallpaper() {
     coldStartStatus = "Loaded desktop: \(desktopURL.lastPathComponent)"
     print("✅ Loaded current desktop wallpaper: \(desktopURL.lastPathComponent)")
   } else if let lastWallpaper = Preferences.shared.lastWallpaper {
-    currentWallpaper = lastWallpaper
-    coldStartStatus = "Loaded from history: \(lastWallpaper.title ?? "Unknown")"
-    print("📋 Loaded app's last wallpaper: \(lastWallpaper.title ?? "Unknown")")
+  // Pre-load the image for cold start
+  if let localURL = lastWallpaper.localURL,
+     FileManager.default.fileExists(atPath: localURL.path),
+               let image = NSImage(contentsOf: localURL) {
+                lastWallpaper.cachedImage = image
+                print("✅ Pre-loaded last wallpaper image from history: \(image.size)")
+            }
+            currentWallpaper = lastWallpaper
+            coldStartStatus = "Loaded from history: \(lastWallpaper.title ?? "Unknown")"
+            print("📋 Loaded app's last wallpaper: \(lastWallpaper.title ?? "Unknown") (image cached: \(lastWallpaper.cachedImage != nil ? "yes" : "no"))")
   } else {
     coldStartStatus = "No wallpaper - screen=\(screen == nil ? "nil" : "ok"), desktopURL=missing, history=missing"
     print("⚠️ No desktop wallpaper detected and no app history")
