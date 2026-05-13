@@ -37,41 +37,49 @@ struct AppNavigationView: View {
         }
     }
 
-    var body: some View {
-        NavigationSplitView {
-            SidebarView(selectedSection: $selectedSection)
-        } content: {
-            switch selectedSection {
-            case .current:
-                CurrentWallpaperView(selectedWallpaper: $selectedWallpaper)
-            case .favorites:
-                FavoritesContentView(selectedWallpaper: $selectedWallpaper)
-            case .history:
-                HistoryContentView(selectedWallpaper: $selectedWallpaper)
-            case .sources:
-                SourcesContentView()
-            case .none:
-                Text("Select a section")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .foregroundColor(.secondary)
-            }
-        } detail: {
-            if let wallpaper = selectedWallpaper {
-                DetailPlaceholderView(wallpaper: wallpaper)
-            } else {
-                Text("Select a wallpaper to view details")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .onAppear {
-            // Configure SwiftData singletons on first appear
-            WallpaperHistory.shared.configure(with: modelContext)
-            WallpaperFavorite.shared.configure(with: modelContext)
-            Preferences.shared.configure(with: modelContext)
-            SourceConfigManager.shared.configure(with: modelContext)
-            CollectionManager.shared.setContext(modelContext)
-            DataContainer.ensureDefaults(in: modelContext)
-        }
+var body: some View {
+  ZStack {
+    LiquidGlassBackground(
+      wallpaper: selectedWallpaper ?? wallpaperManager.currentWallpaper,
+      intensity: 1.0,
+      scrollOffset: 0,
+      isAnimating: true
+    )
+    
+    NavigationSplitView {
+      SidebarView(selectedSection: $selectedSection)
+    } content: {
+      switch selectedSection {
+      case .current:
+        CurrentWallpaperView(selectedWallpaper: $selectedWallpaper)
+      case .favorites:
+        FavoritesContentView(selectedWallpaper: $selectedWallpaper)
+      case .history:
+        HistoryContentView(selectedWallpaper: $selectedWallpaper)
+      case .sources:
+        SourcesContentView()
+      case .none:
+        Text("Select a section")
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .foregroundColor(.secondary)
+      }
+    } detail: {
+      if let wallpaper = selectedWallpaper {
+        DetailPlaceholderView(wallpaper: wallpaper)
+      } else {
+        Text("Select a wallpaper to view details")
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .foregroundColor(.secondary)
+      }
     }
+    .onAppear {
+      WallpaperHistory.shared.configure(with: modelContext)
+      WallpaperFavorite.shared.configure(with: modelContext)
+      Preferences.shared.configure(with: modelContext)
+      SourceConfigManager.shared.configure(with: modelContext)
+      CollectionManager.shared.setContext(modelContext)
+      DataContainer.ensureDefaults(in: modelContext)
+    }
+  }
+}
 }

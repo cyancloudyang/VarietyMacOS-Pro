@@ -9,12 +9,11 @@ import SwiftUI
 @preconcurrency import AppKit
 
 struct DetailPlaceholderView: View {
-    @Bindable var wallpaper: Wallpaper
-    @State private var loadedImage: NSImage? = nil
-    @State private var isLoading = false
-    @StateObject private var wallpaperFavorite = WallpaperFavorite.shared
-    @State private var copiedColor: String? = nil
-    @State private var scrollOffset: CGFloat = 0
+  @Bindable var wallpaper: Wallpaper
+  @State private var loadedImage: NSImage? = nil
+  @State private var isLoading = false
+  @StateObject private var wallpaperFavorite = WallpaperFavorite.shared
+  @State private var copiedColor: String? = nil
 
     private var isFavorited: Bool {
         wallpaperFavorite.isFavorite(wallpaper)
@@ -23,15 +22,6 @@ struct DetailPlaceholderView: View {
 var body: some View {
   ScrollView {
     VStack(alignment: .leading, spacing: 16) {
-      GeometryReader { geo in
-        Color.clear
-          .preference(
-            key: ScrollOffsetPreferenceKey.self,
-            value: geo.frame(in: .scrollView).origin.y
-          )
-      }
-      .frame(height: 0)
-      
       // Preview Image
       previewSection
 
@@ -72,16 +62,11 @@ var body: some View {
 
                 // Actions
         actionsSection
-      }
-      .padding()
-    }
-    .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-      withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-        scrollOffset = offset * 0.3
-      }
-    }
-    .navigationTitle("Details")
-    .task {
+}
+.padding()
+}
+.navigationTitle("Details")
+.task {
             isLoading = true
             loadedImage = try? await wallpaper.loadImage()
             isLoading = false
@@ -90,48 +75,35 @@ var body: some View {
 
     // MARK: - Preview Section
 
-    private var previewSection: some View {
-      Group {
-        if let image = loadedImage, let wallpaperUnwrap = wallpaper as? Wallpaper {
-          // Liquid Glass halo effect - radiates from the wallpaper image
-          ZStack(alignment: .center) {
-            // Background halo effect (visible around the image edges)
-LiquidGlassBackground(
-          wallpaper: wallpaperUnwrap,
-          intensity: 1.0,
-          scrollOffset: scrollOffset,
-          isAnimating: true
+private var previewSection: some View {
+  Group {
+    if let image = loadedImage {
+      Image(nsImage: image)
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .frame(maxWidth: .infinity, maxHeight: 250)
+        .cornerRadius(8)
+        .clipped()
+        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+    } else if isLoading {
+      Rectangle()
+        .fill(Color.gray.opacity(0.1))
+        .frame(height: 250)
+        .cornerRadius(8)
+        .overlay(ProgressView())
+    } else {
+      Rectangle()
+        .fill(Color.gray.opacity(0.1))
+        .frame(height: 250)
+        .cornerRadius(8)
+        .overlay(
+          Image(systemName: "photo")
+            .font(.system(size: 36))
+            .foregroundColor(.secondary)
         )
-            .padding(20) // Extend beyond image for visible halo
-            
-            // Wallpaper image on top
-            Image(nsImage: image)
-              .resizable()
-              .aspectRatio(contentMode: .fit)
-              .frame(maxWidth: .infinity, maxHeight: 250)
-              .cornerRadius(8)
-              .clipped()
-              .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
-          }
-        } else if isLoading {
-          Rectangle()
-            .fill(Color.gray.opacity(0.1))
-            .frame(height: 250)
-            .cornerRadius(8)
-            .overlay(ProgressView())
-        } else {
-          Rectangle()
-            .fill(Color.gray.opacity(0.1))
-            .frame(height: 250)
-            .cornerRadius(8)
-            .overlay(
-              Image(systemName: "photo")
-                .font(.system(size: 36))
-                .foregroundColor(.secondary)
-            )
-        }
-      }
     }
+  }
+}
 
     // MARK: - Title Section
 

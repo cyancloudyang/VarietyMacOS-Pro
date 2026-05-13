@@ -32,9 +32,29 @@ final class WallpaperManager: ObservableObject {
 // MARK: - Initialization
 
 private init() {
-    loadLastWallpaper()
-    setupTimer()
-    setupMemoryWarningObserver()
+  loadLastWallpaper()
+  setupTimer()
+  setupMemoryWarningObserver()
+  Task {
+    try? await Task.sleep(nanoseconds: 500_000_000)
+    await retryDesktopWallpaperLoad()
+  }
+}
+
+private func retryDesktopWallpaperLoad() async {
+  guard currentWallpaper == nil else { return }
+  
+  if let screen = NSScreen.main ?? NSScreen.screens.first,
+     let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen) {
+    let desktopWallpaper = Wallpaper(
+      source: .local,
+      localURL: desktopURL,
+      title: desktopURL.deletingPathExtension().lastPathComponent,
+      resolution: screen.frame.size
+    )
+    currentWallpaper = desktopWallpaper
+    print("✅ Retry loaded desktop wallpaper: \(desktopURL.lastPathComponent)")
+  }
 }
     
 // MARK: - Timer Setup
@@ -355,23 +375,21 @@ private func setWallpaper(image: NSImage) {
 // MARK: - Persistence
 
 private func loadLastWallpaper() {
-  // Step 1: Try to detect actual current desktop wallpaper
-  if let desktopURL = NSWorkspace.shared.desktopImageURL(for: NSScreen.main ?? NSScreen.screens.first!) {
-    // Create a Wallpaper from the detected desktop path
+  let screen = NSScreen.main ?? NSScreen.screens.first
+  if screen != nil, let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen!) {
     let desktopWallpaper = Wallpaper(
       source: .local,
       localURL: desktopURL,
       title: desktopURL.deletingPathExtension().lastPathComponent,
-      resolution: NSScreen.main?.frame.size ?? CGSize(width: 1920, height: 1080)
+      resolution: screen!.frame.size
     )
     currentWallpaper = desktopWallpaper
     print("✅ Loaded current desktop wallpaper: \(desktopURL.lastPathComponent)")
   } else if let lastWallpaper = Preferences.shared.lastWallpaper {
-    // Step 2: Fallback to app's last wallpaper
     currentWallpaper = lastWallpaper
     print("📋 Loaded app's last wallpaper: \(lastWallpaper.title ?? "Unknown")")
   } else {
-    print("⚠️ No desktop wallpaper detected and no app history")
+    print("⚠️ No desktop wallpaper detected and no app history - will load on first fetch")
   }
 }
     
