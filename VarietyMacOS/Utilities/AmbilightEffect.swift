@@ -19,6 +19,7 @@ struct AmbilightEffect: View {
   @State private var leftColor: Color = .clear
   @State private var rightColor: Color = .clear
   @State private var dominantColor: Color = .clear
+  @State private var imageHash: Int = 0
 
   var body: some View {
     GeometryReader { geo in
@@ -94,33 +95,56 @@ struct AmbilightEffect: View {
             .frame(height: geo.size.height * 0.1)
             .blur(radius: 60)
         }
-        .ignoresSafeArea()
-      }
-    }
-    .onAppear { extractColors() }
-    .onChange(of: wallpaper) { _, _ in extractColors() }
-  }
-
-  private func extractColors() {
-    guard let wallpaper = wallpaper else {
-      topColor = .clear
-      bottomColor = .clear
-      leftColor = .clear
-      rightColor = .clear
-      dominantColor = .clear
-      return
-    }
-
-    if let image = wallpaper.cachedImage {
-      extractColorsFromImage(image)
-    } else {
-      Task {
-        if let image = try? await wallpaper.loadImage() {
-          extractColorsFromImage(image)
+.ignoresSafeArea()
         }
+    }
+    .onAppear {
+      extractColors()
+      setupImageObservation()
+    }
+    .onChange(of: wallpaper) { _, _ in
+      extractColors()
+      setupImageObservation()
+    }
+    .onChange(of: imageHash) { _, _ in
+      extractColors()
+    }
+  }
+
+private func extractColors() {
+  guard let wallpaper = wallpaper else {
+    topColor = .clear
+    bottomColor = .clear
+    leftColor = .clear
+    rightColor = .clear
+    dominantColor = .clear
+    return
+  }
+
+  if let image = wallpaper.cachedImage {
+    extractColorsFromImage(image)
+  } else {
+    Task {
+      if let image = try? await wallpaper.loadImage() {
+        extractColorsFromImage(image)
       }
     }
   }
+}
+
+private func setupImageObservation() {
+  guard let wallpaper = wallpaper else { return }
+  
+  if let image = wallpaper.cachedImage {
+    imageHash = image.hashValue
+  } else {
+    Task {
+      if let image = try? await wallpaper.loadImage() {
+        imageHash = image.hashValue
+      }
+    }
+  }
+}
 
   private func extractColorsFromImage(_ image: NSImage) {
     let extractor = AmbilightColorExtractor()

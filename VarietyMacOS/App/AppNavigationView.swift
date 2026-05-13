@@ -73,22 +73,18 @@ var body: some View {
           .background(Color.clear)
       }
     }
-    .onAppear {
-      WallpaperHistory.shared.configure(with: modelContext)
-      WallpaperFavorite.shared.configure(with: modelContext)
-      Preferences.shared.configure(with: modelContext)
-      SourceConfigManager.shared.configure(with: modelContext)
-      CollectionManager.shared.setContext(modelContext)
-      DataContainer.ensureDefaults(in: modelContext)
-      if selectedWallpaper == nil {
-        selectedWallpaper = wallpaperManager.currentWallpaper
-      }
-    }
-    .onChange(of: wallpaperManager.currentWallpaper) { _, newWallpaper in
-      if selectedWallpaper == nil {
-        selectedWallpaper = newWallpaper
-      }
-    }
+.onAppear {
+  WallpaperHistory.shared.configure(with: modelContext)
+  WallpaperFavorite.shared.configure(with: modelContext)
+  Preferences.shared.configure(with: modelContext)
+  SourceConfigManager.shared.configure(with: modelContext)
+  CollectionManager.shared.setContext(modelContext)
+  DataContainer.ensureDefaults(in: modelContext)
+  selectedWallpaper = wallpaperManager.currentWallpaper
+}
+.onChange(of: wallpaperManager.currentWallpaper) { _, newWallpaper in
+  selectedWallpaper = newWallpaper
+}
 
     AmbilightEffect(
       wallpaper: selectedWallpaper ?? wallpaperManager.currentWallpaper,
