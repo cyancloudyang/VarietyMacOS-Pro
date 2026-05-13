@@ -87,22 +87,25 @@ struct CurrentWallpaperView: View {
             }
 
         if let wallpaper = wallpaperManager.currentWallpaper, let image = wallpaper.cachedImage {
-          ZStack {
-            // Liquid Glass background effect - halo radiates from the image
+          // Container with extra space for halo effect
+          ZStack(alignment: .center) {
+            // Liquid Glass background effect - visible around the image
             LiquidGlassBackground(
               wallpaper: wallpaper,
               intensity: 1.0,
               scrollOffset: scrollOffset,
               isAnimating: true
             )
+            .padding(20) // Make background larger than image
             
-            // Wallpaper image on top
+            // Wallpaper image on top with shadow
             Image(nsImage: image)
               .resizable()
               .aspectRatio(contentMode: .fit)
               .frame(maxWidth: .infinity, maxHeight: 300)
               .cornerRadius(8)
               .clipped()
+              .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
               .transition(.opacity.animation(.easeInOut(duration: 0.3)))
           }
           .onTapGesture {
