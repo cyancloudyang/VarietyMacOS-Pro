@@ -7,15 +7,27 @@ import UserNotifications
 @MainActor
 final class WallpaperManager: ObservableObject {
     static let shared = WallpaperManager()
+    
+    // Track if cold-start auto-fetch has run (persists across app lifetime)
+    private static var hasPerformedColdStartFetch = false
 
-// MARK: - Published Properties
+    /// Returns true only once, on the first call after app launch
+    func shouldPerformColdStartFetch() -> Bool {
+        if WallpaperManager.hasPerformedColdStartFetch {
+            return false
+        }
+        WallpaperManager.hasPerformedColdStartFetch = true
+        return true
+    }
 
-@Published var currentWallpaper: Wallpaper?
-@Published var isLoading = false
-@Published var currentSource: WallpaperSourceType = .unsplash
-@Published var error: WallpaperError?
-@Published var downloadProgress: Double = 0.0
-@Published var coldStartStatus: String = "Initializing"
+    // MARK: - Published Properties
+
+    @Published var currentWallpaper: Wallpaper?
+    @Published var isLoading = false
+    @Published var currentSource: WallpaperSourceType = .unsplash
+    @Published var error: WallpaperError?
+    @Published var downloadProgress: Double = 0.0
+    @Published var coldStartStatus: String = "Initializing"
 
     // Debug property for UI
     var debugHistoryCount: Int {

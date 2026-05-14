@@ -90,6 +90,10 @@ var body: some View {
   if selectedWallpaper !== wallpaperManager.currentWallpaper {
     selectedWallpaper = wallpaperManager.currentWallpaper
   }
+  if wallpaperManager.shouldPerformColdStartFetch() {
+    print("🚀 Cold start: auto-fetching network wallpaper")
+    await wallpaperManager.nextWallpaper()
+  }
 }
 
     AmbilightEffect(
