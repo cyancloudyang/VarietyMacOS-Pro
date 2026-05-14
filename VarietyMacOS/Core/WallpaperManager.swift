@@ -153,13 +153,15 @@ private func retryDesktopWallpaperLoad() async {
         await applyWallpaper(wallpaperHistory[historyIndex])
     }
     
-    /// Fetch a new wallpaper from enabled sources with retry mechanism
-    @MainActor
-    private func fetchNewWallpaper() async {
-        // Clear old wallpaper cache to free memory before fetching new one
-        currentWallpaper?.clearCachedImage()
-        
-        error = nil
+/// Fetch a new wallpaper from enabled sources with retry mechanism
+  @MainActor
+  private func fetchNewWallpaper() async {
+    guard !isLoading else {
+      print("⚠️ Already loading, skipping")
+      return
+    }
+
+    error = nil
         
         // Get all enabled sources upfront and try ALL of them before failing
         let enabledSources = Preferences.shared.enabledSources

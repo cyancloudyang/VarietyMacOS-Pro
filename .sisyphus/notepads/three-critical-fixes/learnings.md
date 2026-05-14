@@ -22,3 +22,26 @@
 - 64×64 = 4096 pixels max → O(n) scan + O(k) bin sort where k ≤ 36
 - CILanczosScaleTransform uses GPU via CIContext
 - Should comfortably meet <100ms target
+
+## Final Completion (2026-05-14)
+
+### Summary
+All 14 tasks completed successfully:
+- Wave 1 (T1-T3): Cold start fixes ✅
+- Wave 2 (T4-T7): Fetch pipeline fixes ✅
+- Wave 3 (T8-T9): Ambilight visual overhaul ✅
+- Final (F1-F4): All verification passed ✅
+
+### Key Learnings
+1. `@Transient` properties on SwiftData `@Model` classes don't trigger SwiftUI observation automatically
+2. Picsum Photos uses redirect URLs - cache keys must account for this
+3. Top-K color extraction produces much more vivid results than CIAreaAverage
+4. Ephemeral URLSession prevents -999 cancellation errors
+
+### Evidence
+- Cold start screenshot: `.sisyphus/evidence/final-qa/cold-start-manual.png`
+- All builds succeeded
+- No `noImageAvailable` or `NSURLError -999` errors in final testing
+
+### Commit
+d9d02d3 - feat: Three critical fixes - cold start, fetch success rate, Ambilight effect

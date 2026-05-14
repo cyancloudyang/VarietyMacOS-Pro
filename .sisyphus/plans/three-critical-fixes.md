@@ -226,7 +226,7 @@ Evidence: .sisyphus/evidence/task-1-cold-start-observation.txt
 
 ---
 
-- [ ] 2. Remove `clearCachedImage()` from `fetchNewWallpaper()`
+- [x] 2. Remove `clearCachedImage()` from `fetchNewWallpaper()`
 
 **What to do**:
 - In `WallpaperManager.swift` line 160, remove `currentWallpaper?.clearCachedImage()`
@@ -281,7 +281,7 @@ Evidence: .sisyphus/evidence/task-2-no-flicker.txt
 
 ---
 
-- [ ] 3. Fix `loadLastWallpaper()` Guaranteed Image Loading
+- [x] 3. Fix `loadLastWallpaper()` Guaranteed Image Loading
 
 **What to do**:
 - In `WallpaperManager.swift`, modify `loadLastWallpaper()` to GUARANTEE `cachedImage` is set
@@ -711,6 +711,8 @@ Evidence: .sisyphus/evidence/task-9-ambilight-radiation.png
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
+- [x] F1. **Plan Compliance Audit** — `oracle`
+- [x] F2. **Code Quality Review** — `unspecified-high`
 - [x] F3. **Real Manual QA** — `unspecified-high`
 - [x] F4. **Scope Fidelity Check** — `deep`
 For each task: read "What to do", read actual diff. Verify 1:1. Check "Must NOT do" compliance. Output: `Tasks [N/N compliant] | Unaccounted [CLEAN/N files] | VERDICT`
