@@ -383,7 +383,7 @@ private func loadLastWallpaper() {
   coldStartStatus = "Checking screens..."
   let screen = NSScreen.main ?? NSScreen.screens.first
   
-  if screen != nil, let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen!) {
+    if screen != nil, let desktopURL = NSWorkspace.shared.desktopImageURL(for: screen!) {
     let desktopWallpaper = Wallpaper(
       source: .local,
       localURL: desktopURL,
@@ -397,10 +397,18 @@ private func loadLastWallpaper() {
       print("✅ Pre-loaded desktop wallpaper image: \(image.size)")
     }
     currentWallpaper = desktopWallpaper
+    objectWillChange.send()
     coldStartStatus = "Loaded desktop: \(desktopURL.lastPathComponent)"
     print("✅ Loaded current desktop wallpaper: \(desktopURL.lastPathComponent)")
   } else if let lastWallpaper = Preferences.shared.lastWallpaper {
     currentWallpaper = lastWallpaper
+    if let localURL = lastWallpaper.localURL,
+       FileManager.default.fileExists(atPath: localURL.path),
+       let image = NSImage(contentsOf: localURL) {
+      lastWallpaper.setCachedImage(image)
+      print("✅ Pre-loaded last wallpaper image: \(image.size)")
+    }
+    objectWillChange.send()
     coldStartStatus = "Loaded from history: \(lastWallpaper.title ?? "Unknown")"
     print("📋 Loaded app's last wallpaper: \(lastWallpaper.title ?? "Unknown")")
   } else {

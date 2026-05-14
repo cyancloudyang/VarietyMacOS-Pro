@@ -62,7 +62,11 @@ struct DetailPlaceholderView: View {
         }
         .task {
             isLoading = true
-            loadedImage = try? await wallpaper.loadImage()
+            if let cached = wallpaper.cachedImage {
+                loadedImage = cached
+            } else {
+                loadedImage = try? await wallpaper.loadImage()
+            }
             isLoading = false
         }
     }

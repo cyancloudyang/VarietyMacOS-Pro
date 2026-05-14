@@ -85,6 +85,12 @@ var body: some View {
 .onChange(of: wallpaperManager.currentWallpaper) { _, newWallpaper in
   selectedWallpaper = newWallpaper
 }
+.task {
+  try? await Task.sleep(nanoseconds: 100_000_000)
+  if selectedWallpaper !== wallpaperManager.currentWallpaper {
+    selectedWallpaper = wallpaperManager.currentWallpaper
+  }
+}
 
     AmbilightEffect(
       wallpaper: selectedWallpaper ?? wallpaperManager.currentWallpaper,

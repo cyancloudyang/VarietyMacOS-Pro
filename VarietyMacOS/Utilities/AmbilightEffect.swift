@@ -52,53 +52,62 @@ struct AmbilightEffect: View {
         .animation(.easeInOut(duration: 0.5), value: rightColor)
     }
     
-    @ViewBuilder
+@ViewBuilder
     private func edgeBasedGlows(containerSize: CGSize) -> some View {
-        let rightEdgeX = geometry.frame.minX
-        let topEdgeY = geometry.frame.minY
-        let bottomEdgeY = geometry.frame.maxY
-        let leftEdgeX = geometry.frame.maxX
-        let viewHeight = geometry.frame.height
+        // Use the right column (detail view) frame as the source
+        let detailFrame = geometry.frame
+        let viewHeight = detailFrame.height
+        let viewWidth = detailFrame.width
         
+        // Calculate edge positions - glow radiates OUTWARD from each edge
+        let rightEdgeX = detailFrame.maxX  // Right edge of detail view
+        let leftEdgeX = detailFrame.minX   // Left edge of detail view
+        let topEdgeY = detailFrame.minY    // Top edge of detail view
+        let bottomEdgeY = detailFrame.maxY // Bottom edge of detail view
+
         ZStack {
+            // RIGHT EDGE GLOW - radiates to the right
             HStack {
                 rightColor
-                    .opacity(0.8 * intensity)
-                    .frame(width: containerSize.width * 0.5, height: viewHeight * 1.2)
-                    .blur(radius: 150)
-                Spacer()
-            }
-            .position(x: rightEdgeX, y: geometry.frame.midY)
-            .ignoresSafeArea()
-            
-            VStack {
-                topColor
-                    .opacity(0.5 * intensity)
-                    .frame(width: geometry.frame.width * 1.3, height: containerSize.height * 0.4)
+                    .opacity(0.9 * intensity)
+                    .frame(width: containerSize.width * 0.4, height: viewHeight * 1.1)
                     .blur(radius: 120)
                 Spacer()
             }
-            .position(x: geometry.frame.midX, y: topEdgeY)
+            .position(x: rightEdgeX + (containerSize.width * 0.2), y: detailFrame.midY)
             .ignoresSafeArea()
-            
-            VStack {
-                Spacer()
-                bottomColor
-                    .opacity(0.5 * intensity)
-                    .frame(width: geometry.frame.width * 1.3, height: containerSize.height * 0.4)
-                    .blur(radius: 120)
-            }
-            .position(x: geometry.frame.midX, y: bottomEdgeY)
-            .ignoresSafeArea()
-            
+
+            // LEFT EDGE GLOW - radiates to the left
             HStack {
                 Spacer()
                 leftColor
-                    .opacity(0.3 * intensity)
-                    .frame(width: containerSize.width * 0.3, height: viewHeight * 0.8)
+                    .opacity(0.7 * intensity)
+                    .frame(width: containerSize.width * 0.3, height: viewHeight * 0.9)
                     .blur(radius: 100)
             }
-            .position(x: leftEdgeX, y: geometry.frame.midY)
+            .position(x: leftEdgeX - (containerSize.width * 0.15), y: detailFrame.midY)
+            .ignoresSafeArea()
+
+            // TOP EDGE GLOW - radiates upward
+            VStack {
+                topColor
+                    .opacity(0.6 * intensity)
+                    .frame(width: viewWidth * 1.2, height: containerSize.height * 0.3)
+                    .blur(radius: 100)
+                Spacer()
+            }
+            .position(x: detailFrame.midX, y: topEdgeY - (containerSize.height * 0.15))
+            .ignoresSafeArea()
+
+            // BOTTOM EDGE GLOW - radiates downward
+            VStack {
+                Spacer()
+                bottomColor
+                    .opacity(0.6 * intensity)
+                    .frame(width: viewWidth * 1.2, height: containerSize.height * 0.3)
+                    .blur(radius: 100)
+            }
+            .position(x: detailFrame.midX, y: bottomEdgeY + (containerSize.height * 0.15))
             .ignoresSafeArea()
         }
     }
@@ -173,15 +182,12 @@ enum ImageEdge {
     }
 
     func extractEdgeColor(from image: NSImage, edge: ImageEdge) -> NSColor {
-        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-            return .windowBackgroundColor
-        }
-
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return .windowBackgroundColor }
         let ciImage = CIImage(cgImage: cgImage)
         let width = ciImage.extent.width
         let height = ciImage.extent.height
-        let sampleRatio: CGFloat = 0.1
-
+        // Sample from the outer edge only (5% of image) for more focused color extraction
+        let sampleRatio: CGFloat = 0.05
         let rect: CGRect
         switch edge {
         case .right:
@@ -193,14 +199,11 @@ enum ImageEdge {
         case .bottom:
             rect = CGRect(x: 0, y: 0, width: width, height: height * sampleRatio)
         }
-
-        guard let pixelData = downsampleAndExtractPixels(from: image, rect: rect) else {
-            return .windowBackgroundColor
-        }
-        return edgeColorFromPixels(pixelData)
-    }
-
-    // MARK: - Downsampling
+guard let pixelData = downsampleAndExtractPixels(from: image, rect: rect) else { return .windowBackgroundColor }
+    return edgeColorFromPixels(pixelData)
+  }
+  
+  // MARK: - Downsampling
 
     private func downsampleAndExtractPixels(from image: NSImage, rect: CGRect? = nil) -> [(r: Float, g: Float, b: Float)]? {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
@@ -300,10 +303,9 @@ enum ImageEdge {
             }
             .sorted { $0.avgSat > $1.avgSat }
 
-        if let best = candidates.first, best.avgSat > 0.2 {
-            let boostedR = min(1.0, best.avgR * 1.15)
-            let boostedG = min(1.0, best.avgG * 1.15)
-            let boostedB = min(1.0, best.avgB * 1.15)
+        if let best = candidates.first, best.avgSat > 0.15 {
+            // Boost saturation and brightness for more vivid colors
+            let (boostedR, boostedG, boostedB) = boostColorVividness(best.avgR, best.avgG, best.avgB, saturationBoost: 1.4, brightnessBoost: 1.2)
             return NSColor(red: CGFloat(boostedR), green: CGFloat(boostedG), blue: CGFloat(boostedB), alpha: 1.0)
         }
 
@@ -350,8 +352,25 @@ enum ImageEdge {
         return simpleAverage(pixels)
     }
 
-    // MARK: - Utilities
-
+// MARK: - Utilities
+    
+    /// Boosts color vividness by increasing saturation and brightness
+    /// - Parameters: r, g, b: Original color values (0-1)
+    /// - Returns: Tuple of boosted (r, g, b) values
+    private func boostColorVividness(_ r: Float, _ g: Float, _ b: Float, saturationBoost: Float = 1.3, brightnessBoost: Float = 1.15) -> (Float, Float, Float) {
+        // Convert to HSL
+        let (h, s, l) = rgbToHsl(r, g, b)
+        
+        // Boost saturation and lightness
+        let boostedS = min(1.0, s * saturationBoost)
+        let boostedL = min(0.95, l * brightnessBoost)
+        
+        // Convert back to RGB
+        let (boostedR, boostedG, boostedB) = hslToRgb(h, boostedS, boostedL)
+        
+        return (boostedR, boostedG, boostedB)
+    }
+    
     private func simpleAverage(_ pixels: [(r: Float, g: Float, b: Float)]) -> NSColor {
         let count = Float(pixels.count)
         let avgR = pixels.map(\.r).reduce(0, +) / count
@@ -364,37 +383,61 @@ enum ImageEdge {
         return 0.299 * r + 0.587 * g + 0.114 * b
     }
 
-    private func rgbToHsl(_ r: Float, _ g: Float, _ b: Float) -> (h: Float, s: Float, l: Float) {
+private func rgbToHsl(_ r: Float, _ g: Float, _ b: Float) -> (h: Float, s: Float, l: Float) {
         let max = Swift.max(r, g, b)
         let min = Swift.min(r, g, b)
         let l = (max + min) / 2
-
         if max == min {
             return (0, 0, l)
         }
-
         let d = max - min
         let s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-
         let h: Float
         switch max {
-        case r:
-            h = ((g - b) / d) + (g < b ? 6 : 0)
-        case g:
-            h = ((b - r) / d) + 2
+        case r: h = ((g - b) / d) + (g < b ? 6 : 0)
+        case g: h = ((b - r) / d) + 2
         default: // b
             h = ((r - g) / d) + 4
         }
         return (h / 6, s, l)
     }
+    
+    /// Convert HSL to RGB
+    private func hslToRgb(_ h: Float, _ s: Float, _ l: Float) -> (Float, Float, Float) {
+        let r: Float, g: Float, b: Float
+        
+        if s == 0 {
+            r = l
+            g = l
+            b = l
+        } else {
+            let q = l < 0.5 ? l * (1 + s) : l + s - l * s
+            let p = 2 * l - q
+            
+            let hueToRgb: (Float) -> Float = { t in
+                var t = t
+                if t < 0 { t += 1 }
+                if t > 1 { t -= 1 }
+                if t < 1/6 { return p + (q - p) * 6 * t }
+                if t < 1/2 { return q }
+                if t < 2/3 { return p + (q - p) * (2/3 - t) * 6 }
+                return p
+            }
+            
+            r = hueToRgb(h + 1/3)
+            g = hueToRgb(h)
+            b = hueToRgb(h - 1/3)
+        }
+        
+return (r, g, b)
+    }
 }
 
-// MARK: - Detail View Geometry
 
+// MARK: - Detail View Geometry
 @MainActor
 final class DetailViewGeometry: ObservableObject {
     static let shared = DetailViewGeometry()
-    
     @Published var frame: CGRect = .zero
     @Published var isPresented: Bool = false
 }
