@@ -157,9 +157,10 @@ struct WallhavenSource: WallpaperSource, Sendable {
         var components = URLComponents(string: "\(baseURL)/search")!
 
         let randomSeed = Int.random(in: 1..<1000000)
+        let randomPage = Int.random(in: 1...10)
 
         var queryItems: [URLQueryItem] = [
-            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "page", value: String(randomPage)),
             URLQueryItem(name: "sorting", value: sorting),
             URLQueryItem(name: "categories", value: categories),
             URLQueryItem(name: "purity", value: purity),

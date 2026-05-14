@@ -228,8 +228,40 @@ private func retryDesktopWallpaperLoad() async {
             }
         }
 
-        // All attempts failed
-        print("✗ All \(maxAttempts) attempts failed")
+        // Fallback: retry all sources without duplicate detection to ensure user always gets a wallpaper
+        print("🔄 Fallback: retrying without duplicate detection...")
+        var fallbackAttemptedSources: Set<String> = []
+        for attempt in 1...maxAttempts {
+            let source = getNextSource(excluding: fallbackAttemptedSources)
+            let sourceKey = source.sourceID
+            
+            print("📥 Fallback attempt \(attempt)/\(maxAttempts): Fetching from \(source.displayName)...")
+            do {
+                let wallpaper = try await source.fetchWallpaper()
+                print("✓ Fallback fetched: \(wallpaper.title ?? "Untitled")")
+                
+                guard wallpaper.remoteURL != nil || wallpaper.localURL != nil else {
+                    throw NSError(domain: "WallpaperManager", code: -2, userInfo: [NSLocalizedDescriptionKey: "Invalid wallpaper - no URL"])
+                }
+                
+                // Skip duplicate check in fallback mode
+                wallpaperHistory.append(wallpaper)
+                historyIndex = wallpaperHistory.count - 1
+                print("🖼️ Applying to desktop...")
+                await applyWallpaper(wallpaper)
+                print("✓ Done")
+                return
+            } catch {
+                fallbackAttemptedSources.insert(sourceKey)
+                print("✗ Fallback attempt \(attempt) failed: \(error.localizedDescription)")
+                if attempt < maxAttempts {
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                }
+            }
+        }
+
+        // All attempts failed (including fallback)
+        print("✗ All \(maxAttempts) attempts failed (including fallback)")
         let errorMessage = lastError?.localizedDescription ?? "Unknown error"
         self.error = WallpaperError.fetchFailed(lastError ?? NSError(domain: "WallpaperManager", code: -1, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 
