@@ -156,11 +156,6 @@ private func retryDesktopWallpaperLoad() async {
 /// Fetch a new wallpaper from enabled sources with retry mechanism
   @MainActor
   private func fetchNewWallpaper() async {
-    guard !isLoading else {
-      print("⚠️ Already loading, skipping")
-      return
-    }
-
     error = nil
         
         // Get all enabled sources upfront and try ALL of them before failing
