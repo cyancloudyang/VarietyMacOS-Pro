@@ -9,64 +9,58 @@ import SwiftUI
 @preconcurrency import AppKit
 
 struct DetailPlaceholderView: View {
-  @Bindable var wallpaper: Wallpaper
-  @State private var loadedImage: NSImage? = nil
-  @State private var isLoading = false
-  @StateObject private var wallpaperFavorite = WallpaperFavorite.shared
-  @State private var copiedColor: String? = nil
-
+    @Bindable var wallpaper: Wallpaper
+    @State private var loadedImage: NSImage? = nil
+    @State private var isLoading = false
+    @StateObject private var wallpaperFavorite = WallpaperFavorite.shared
+    @State private var copiedColor: String? = nil
+    
     private var isFavorited: Bool {
         wallpaperFavorite.isFavorite(wallpaper)
     }
-
-var body: some View {
-  ScrollView {
-    VStack(alignment: .leading, spacing: 16) {
-      // Preview Image
-      previewSection
-
-                Divider()
-
-    // Title & Author
-                titleSection
-
-                // Rating
-                RatingStarsView(rating: wallpaper.userRating) { newRating in
-                    wallpaper.userRating = newRating
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    previewSection
+                    Divider()
+                    titleSection
+                    RatingStarsView(rating: wallpaper.userRating) { newRating in
+                        wallpaper.userRating = newRating
+                    }
+                    .padding(.vertical, 4)
+                    
+                    TagEditorView(tags: Binding(
+                        get: { wallpaper.userTags ?? [] },
+                        set: { wallpaper.userTags = $0 }
+                    ))
+                    .padding(.vertical, 4)
+                    
+                    sourceBadge
+                    Divider()
+                    infoSection
+                    
+                    if !wallpaper.colorSwatchesHex.isEmpty {
+                        colorPaletteSection
+                    }
+                    
+                    statsSection
+                    Divider()
+                    actionsSection
                 }
-                .padding(.vertical, 4)
-
-    TagEditorView(tags: Binding(
-        get: { wallpaper.userTags ?? [] },
-        set: { wallpaper.userTags = $0 }
-    ))
-    .padding(.vertical, 4)
-
-                // Source Badge
-                sourceBadge
-
-                Divider()
-
-                // Resolution & File Info
-                infoSection
-
-                // Color Palette
-                if !wallpaper.colorSwatchesHex.isEmpty {
-                    colorPaletteSection
-                }
-
-                // Stats
-                statsSection
-
-                Divider()
-
-                // Actions
-        actionsSection
-}
-.padding()
-}
-.navigationTitle("Details")
-.task {
+                .padding()
+            }
+            .navigationTitle("Details")
+            .onAppear {
+                DetailViewGeometry.shared.frame = geometry.frame(in: .global)
+                DetailViewGeometry.shared.isPresented = true
+            }
+            .onChange(of: geometry.frame(in: .global)) { _, newFrame in
+                DetailViewGeometry.shared.frame = newFrame
+            }
+        }
+        .task {
             isLoading = true
             loadedImage = try? await wallpaper.loadImage()
             isLoading = false

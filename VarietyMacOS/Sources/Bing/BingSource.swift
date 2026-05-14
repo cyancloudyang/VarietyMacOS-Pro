@@ -31,11 +31,13 @@ struct BingSource: WallpaperSource, Sendable {
     // MARK: - WallpaperSource
     
     func fetchWallpaper() async throws -> Wallpaper {
-        let wallpapers = try await fetchWallpapers(count: 1)
-        guard let first = wallpapers.first else {
+        // Fetch 7 days worth of wallpapers to get variety
+        let wallpapers = try await fetchWallpapers(count: 7)
+        guard !wallpapers.isEmpty else {
             throw WallpaperError.noImageAvailable
         }
-        return first
+        // Pick a random one from the fetched wallpapers
+        return wallpapers.randomElement()!
     }
     
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {

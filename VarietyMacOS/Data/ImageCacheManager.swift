@@ -18,6 +18,10 @@ final class ImageCacheManager {
     private let maxMemoryItems = 50
     private let maxDiskSizeMB: UInt64 = 500
     
+    // Dedicated ephemeral session for image downloads
+    // Using ephemeral avoids NSURLError -999 cancellations from shared session reuse
+    private let session: URLSession
+
   // CIContext for hardware-accelerated image processing
   private let ciContext: CIContext
 
@@ -25,6 +29,11 @@ final class ImageCacheManager {
   private let thumbnailPipeline = ThumbnailPipeline()
 
   private init() {
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 300
+        config.waitsForConnectivity = true
+        self.session = URLSession(configuration: config)
         memoryCache.countLimit = maxMemoryItems
         
         // Disk cache directory in user's cache
@@ -66,9 +75,9 @@ final class ImageCacheManager {
             return cached
         }
         
-        // 3. Download and cache
+        // 3. Download and cache using dedicated ephemeral session
         Logger.debug("Cache miss, downloading: \(key)")
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let (data, _) = try await session.data(from: url)
         
         // Use Core Image for hardware-accelerated decoding (M-chip optimization)
         guard let image = decodeImageWithCoreImage(data) ?? NSImage(data: data) else {

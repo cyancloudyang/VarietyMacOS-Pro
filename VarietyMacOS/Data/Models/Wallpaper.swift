@@ -166,43 +166,50 @@ final class Wallpaper {
         self.userTags = userTags
     }
 
-    // MARK: - Methods
+// MARK: - Methods
 
-    /// Clear the cached image to free memory
-    func clearCachedImage() {
-        cachedImage = nil
+  /// Set the cached image
+  @MainActor
+  func setCachedImage(_ image: NSImage?) {
+    cachedImage = image
+  }
+
+  /// Clear the cached image to free memory
+  @MainActor
+  func clearCachedImage() {
+    setCachedImage(nil)
+  }
+
+  /// Load the full image
+  @MainActor
+  func loadImage() async throws -> NSImage {
+    // Check cache first
+    if let cached = cachedImage {
+      return cached
     }
 
-    /// Load the full image
-    @MainActor
-    func loadImage() async throws -> NSImage {
-        // Check cache first
-        if let cached = cachedImage {
-            return cached
-        }
-
-        // Try local file
-        if let localURL = localURL,
-           FileManager.default.fileExists(atPath: localURL.path),
-           let image = NSImage(contentsOf: localURL) {
-            self.cachedImage = image
-            return image
-        }
-
-        // Download from remote
-        guard let remoteURL = remoteURL else {
-            throw WallpaperError.noImageAvailable
-        }
-
-        let (data, _) = try await URLSession.shared.data(from: remoteURL)
-        guard let image = NSImage(data: data) else {
-            throw WallpaperError.invalidImage
-        }
-
-        self.cachedImage = image
-
-        return image
+    // Try local file
+    if let localURL = localURL,
+       FileManager.default.fileExists(atPath: localURL.path),
+       let image = NSImage(contentsOf: localURL) {
+      setCachedImage(image)
+      return image
     }
+
+    // Download from remote
+    guard let remoteURL = remoteURL else {
+      throw WallpaperError.noImageAvailable
+    }
+
+    let (data, _) = try await URLSession.shared.data(from: remoteURL)
+    guard let image = NSImage(data: data) else {
+      throw WallpaperError.invalidImage
+    }
+
+    setCachedImage(image)
+
+    return image
+  }
 
     /// Load thumbnail
     @MainActor

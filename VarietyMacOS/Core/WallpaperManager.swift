@@ -115,13 +115,18 @@ private func retryDesktopWallpaperLoad() async {
     /// Load the next wallpaper
     @MainActor
     func nextWallpaper() async {
-        print("🔄 nextWallpaper() called, isLoading=\(isLoading)")
-        
-        if isLoading {
+        guard !isLoading else {
             print("⚠️ Already loading, skipping")
             return
         }
         print("🔄 Next wallpaper requested")
+        
+        // Set loading flag BEFORE any async work to prevent rapid-click NSURLError -999
+        isLoading = true
+        defer {
+            isLoading = false
+            print("🟢 isLoading set to false (defer)")
+        }
         
         // Check history first
         if historyIndex < wallpaperHistory.count - 1 {
@@ -151,34 +156,24 @@ private func retryDesktopWallpaperLoad() async {
     /// Fetch a new wallpaper from enabled sources with retry mechanism
     @MainActor
     private func fetchNewWallpaper() async {
-        guard !isLoading else {
-            print("⚠️ Already loading, skipping")
-            return
-        }
-        
         // Clear old wallpaper cache to free memory before fetching new one
         currentWallpaper?.clearCachedImage()
         
-        isLoading = true
         error = nil
-        print("🔴 isLoading set to true")
         
-        defer {
-            isLoading = false
-            print("🟢 isLoading set to false (defer)")
-        }
-        
-        // Try up to 3 times with different sources (reduced from 5)
-        let maxRetries = 3
-        var lastError: Error? = nil
+        // Get all enabled sources upfront and try ALL of them before failing
+        let enabledSources = Preferences.shared.enabledSources
         var attemptedSources: Set<String> = []
-        
-        for attempt in 1...maxRetries {
+        var lastError: Error? = nil
+        // Try at least 3 times or the number of enabled sources, whichever is larger
+        let maxAttempts = max(enabledSources.count, 3)
+
+        for attempt in 1...maxAttempts {
             // Get next source, excluding previously failed ones
             let source = getNextSource(excluding: attemptedSources)
             let sourceKey = source.sourceID
             
-            print("📥 Attempt \(attempt)/\(maxRetries): Fetching from \(source.displayName)...")
+            print("📥 Attempt \(attempt)/\(maxAttempts): Fetching from \(source.displayName)...")
             
             do {
                 let wallpaper = try await source.fetchWallpaper()
@@ -215,9 +210,9 @@ private func retryDesktopWallpaperLoad() async {
                 lastError = error
                 attemptedSources.insert(sourceKey)
                 print("✗ Attempt \(attempt) failed: \(error.localizedDescription)")
-                
+
                 // Add small delay before retry to avoid rate limiting
-                if attempt < maxRetries {
+                if attempt < maxAttempts {
                     print("🔄 Retrying with different source...")
                     try? await Task.sleep(nanoseconds: 500_000_000) // 500ms delay
                 }
@@ -225,12 +220,12 @@ private func retryDesktopWallpaperLoad() async {
         }
 
         // All attempts failed
-        print("✗ All \(maxRetries) attempts failed")
+        print("✗ All \(maxAttempts) attempts failed")
         let errorMessage = lastError?.localizedDescription ?? "Unknown error"
         self.error = WallpaperError.fetchFailed(lastError ?? NSError(domain: "WallpaperManager", code: -1, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
 
         // Show notification to user
-        showNotification(title: "Failed to Fetch Wallpaper", body: "Could not fetch wallpaper after \(maxRetries) attempts. Please check your network connection.")
+        showNotification(title: "Failed to Fetch Wallpaper", body: "Could not fetch wallpaper after \(maxAttempts) attempts. Please check your network connection.")
     }
     
     /// Apply wallpaper to screen(s) - Public version

@@ -10,13 +10,17 @@ final class DuplicateChecker {
     /// Check if a wallpaper was recently applied within the specified time window
     func isDuplicate(_ wallpaper: Wallpaper, in history: [HistoryEntry], within window: TimeInterval) -> Bool {
         let cutoffDate = Date().addingTimeInterval(-window)
-        
+        let wallpaperURLString = wallpaper.remoteURL?.absoluteString
+
         for entry in history where entry.timestamp >= cutoffDate {
-            if entry.wallpaperId == wallpaper.id {
+            // Compare by remote URL string to avoid ID collisions from same-source fetches
+            if let entryURLString = entry.wallpaper?.remoteURL?.absoluteString,
+               let wallpaperURLString = wallpaperURLString,
+               entryURLString == wallpaperURLString {
                 return true
             }
         }
-        
+
         return false
     }
     
