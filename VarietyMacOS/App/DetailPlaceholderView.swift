@@ -60,8 +60,9 @@ struct DetailPlaceholderView: View {
                 DetailViewGeometry.shared.frame = newFrame
             }
         }
-        .task {
+        .task(id: wallpaper.id) {
             isLoading = true
+            loadedImage = nil
             if let cached = wallpaper.cachedImage {
                 loadedImage = cached
             } else {
