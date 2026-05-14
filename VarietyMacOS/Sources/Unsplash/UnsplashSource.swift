@@ -45,21 +45,23 @@ struct UnsplashSource: WallpaperSource, Sendable {
         // Use Picsum Photos as reliable free alternative to deprecated source.unsplash.com
         var wallpapers: [Wallpaper] = []
         
-        for _ in 0..<count {
-        let url = URL(string: "https://picsum.photos/1920/1080")!
-        let wallpaper = Wallpaper(
-            id: "picsum_\(UUID().uuidString)",
-            source: .unsplash,
-            remoteURL: url,
-            thumbnailURL: URL(string: "https://picsum.photos/400/225")!,
-            title: "Picsum Photo",
-            wallpaperDescription: "Random photo from Picsum Photos",
-            author: "Picsum",
-            sourceURL: url,
-            resolution: CGSize(width: 1920, height: 1080)
-        )
-            wallpapers.append(wallpaper)
-        }
+for _ in 0..<count {
+    // Add random parameter to ensure unique URL for each fetch (prevents duplicate detection)
+    let randomParam = Date.timeIntervalSinceReferenceDate
+    let url = URL(string: "https://picsum.photos/1920/1080?random=\(randomParam)")!
+    let wallpaper = Wallpaper(
+      id: "picsum_\(UUID().uuidString)",
+      source: .unsplash,
+      remoteURL: url,
+      thumbnailURL: URL(string: "https://picsum.photos/400/225?random=\(randomParam)")!,
+      title: "Picsum Photo",
+      wallpaperDescription: "Random photo from Picsum Photos",
+      author: "Picsum",
+      sourceURL: url,
+      resolution: CGSize(width: 1920, height: 1080)
+    )
+    wallpapers.append(wallpaper)
+  }
         
         return wallpapers
     }

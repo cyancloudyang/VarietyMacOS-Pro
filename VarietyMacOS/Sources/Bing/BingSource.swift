@@ -30,15 +30,15 @@ struct BingSource: WallpaperSource, Sendable {
     
     // MARK: - WallpaperSource
     
-    func fetchWallpaper() async throws -> Wallpaper {
-        // Fetch 7 days worth of wallpapers to get variety
-        let wallpapers = try await fetchWallpapers(count: 7)
-        guard !wallpapers.isEmpty else {
-            throw WallpaperError.noImageAvailable
-        }
-        // Pick a random one from the fetched wallpapers
-        return wallpapers.randomElement()!
+func fetchWallpaper() async throws -> Wallpaper {
+    // Fetch 14 days worth of wallpapers to get more variety
+    let wallpapers = try await fetchWallpapers(count: 14)
+    guard !wallpapers.isEmpty else {
+      throw WallpaperError.noImageAvailable
     }
+    // Pick a random one from the fetched wallpapers
+    return wallpapers.randomElement()!
+  }
     
     func fetchWallpapers(count: Int) async throws -> [Wallpaper] {
         let url = buildArchiveURL(count: count)
@@ -213,22 +213,22 @@ extension BingSource {
         formatter.dateFormat = "yyyyMMdd"
         let dateString = formatter.string(from: date)
         
-        // Bing API doesn't support specific dates, so we get recent ones
-        // and filter (this is a simplified approach)
-        let wallpapers = try await fetchWallpapers(count: 8)
-        if let wallpaper = wallpapers.first(where: { $0.id.contains(dateString) }) {
-            return wallpaper
-        }
-        
-        // Return first available if specific date not found
-        guard let first = wallpapers.first else {
-            throw WallpaperError.noImageAvailable
-        }
-        return first
-    }
-    
-    /// Get wallpapers for multiple days
-    func fetchWallpapers(days: Int) async throws -> [Wallpaper] {
-        return try await fetchWallpapers(count: min(days, 8))
-    }
+// Bing API doesn't support specific dates, so we get recent ones
+  // and filter (this is a simplified approach)
+  let wallpapers = try await fetchWallpapers(count: 14)
+  if let wallpaper = wallpapers.first(where: { $0.id.contains(dateString) }) {
+    return wallpaper
+  }
+
+  // Return first available if specific date not found
+  guard let first = wallpapers.first else {
+    throw WallpaperError.noImageAvailable
+  }
+  return first
+}
+
+/// Get wallpapers for multiple days
+func fetchWallpapers(days: Int) async throws -> [Wallpaper] {
+  return try await fetchWallpapers(count: min(days, 14))
+}
 }
